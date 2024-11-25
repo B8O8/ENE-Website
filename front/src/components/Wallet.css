@@ -1,0 +1,13 @@
+.wallet {
+  font-size: 1.2rem;
+  color: #333;
+}
+.wallet .text-primary {
+  color: #007bff;
+}
+
+.balance {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}

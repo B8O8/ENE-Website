@@ -1,0 +1,56 @@
+/* Login Page Styles */
+
+.login-container {
+    background-color: #f8f9fa; /* Light background */
+    height: 100vh;
+  }
+  
+  .rotating-logo {
+    width: 300px;
+    animation: rotate 4s linear infinite;
+  }
+  
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .login-card h3 {
+    color: #343a40; /* Darker text color */
+    font-weight: bold;
+  }
+  
+  .login-card .form-control {
+    padding: 10px;
+    font-size: 1rem;
+  }
+  
+  .login-card .btn-primary {
+    background-color: #007bff;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-card .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  .login-card a {
+    font-size: 0.9rem;
+    color: #007bff;
+    transition: color 0.3s ease;
+  }
+  
+  .login-card a:hover {
+    color: #0056b3;
+  }
+  

@@ -1,0 +1,14 @@
+.pending-commissions {
+    padding: 20px;
+  }
+  
+  .pending-commissions .table {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .pending-commissions .badge {
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+  

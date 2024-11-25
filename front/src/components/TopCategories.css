@@ -1,0 +1,54 @@
+/* General Section Styling */
+.categories-section {
+    background-color: #f8f9fa; /* Light background */
+  }
+  
+  .categories-section h2 {
+    font-size: 2rem;
+    position: relative;
+  }
+  
+  .categories-section .highlight-line {
+    display: inline-block;
+    height: 4px;
+    width: 50px;
+    background-color: #ffc107; /* Golden Yellow */
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+  
+  /* Category Card Styles */
+  .category-card .card {
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .category-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .category-card .icon {
+    font-size: 2.5rem;
+    color: #007bff; /* Blue Accent */
+  }
+  
+  .category-card h6 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  /* Responsive Design */
+  @media screen and (max-width: 576px) {
+    .categories-section h2 {
+      font-size: 1.5rem;
+    }
+  
+    .category-card .icon {
+      font-size: 2rem;
+    }
+  }
+  

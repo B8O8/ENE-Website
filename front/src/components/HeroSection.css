@@ -1,0 +1,89 @@
+/* Hero Section Styles */
+.hero-section {
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    padding: 50px 0;
+  }
+  
+  /* Left Section Text */
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1.2;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  /* Button Styling */
+  .hero-section .btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 50px;
+  }
+  
+  .hero-section .btn-primary {
+    background-color: #007bff;
+    border: none;
+  }
+  
+  .hero-section .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Registration Form Styles */
+  .bg-white {
+    background-color: #fff;
+  }
+  
+  .rounded {
+    border-radius: 12px;
+  }
+  
+  .shadow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-group input {
+    border: 1px solid #ced4da;
+    border-radius: 50px;
+    padding: 10px 20px;
+  }
+  
+  .form-control::placeholder {
+    color: #6c757d;
+  }
+  
+  .form-control:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2rem;
+    }
+  
+    .btn {
+      font-size: 0.9rem;
+    }
+  }
+  
