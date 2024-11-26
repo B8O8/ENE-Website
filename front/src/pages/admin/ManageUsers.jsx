@@ -25,7 +25,7 @@ const ManageUsers = () => {
   // Approve user
   const handleApproveUser = async (userId) => {
     try {
-      await apiService.post("/approve", { id: userId });
+      await apiService.post("/approve", { userId });
       toast.success("User approved successfully!");
       fetchUsers();
     } catch (error) {
@@ -36,7 +36,7 @@ const ManageUsers = () => {
   // Reject user
   const handleRejectUser = async (userId) => {
     try {
-      await apiService.put(`/admin/${userId}`, { status: "Rejected" });
+      await apiService.post(`/reject`, { userId });
       toast.success("User rejected successfully!");
       fetchUsers();
     } catch (error) {
