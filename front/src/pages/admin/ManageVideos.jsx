@@ -74,24 +74,31 @@ const ManageVideos = () => {
     formData.append("video_order", currentVideo.video_order || 1);
     if (currentVideo.file) formData.append("video", currentVideo.file);
 
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-
+  
     try {
-      if (modalMode === "add") {
-        await apiService.post(
-          `/categories/${selectedCategory}/videos`,
-          formData
-        );
-        toast.success("Video added successfully.");
-      } else {
-        await apiService.put(
-          `/categories/${selectedCategory}/videos/${currentVideo.id}`,
-          formData
-        );
-        toast.success("Video updated successfully.");
-      }
+      await apiService.post(
+        `/categories/${selectedCategory}/videos`,
+        formData,
+        {
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            console.log(`Upload progress: ${percentCompleted}%`);
+            toast.info(`Upload progress: ${percentCompleted}%`, {
+              autoClose: false,
+              toastId: "upload-progress", // Use a unique ID for the progress toast
+            });
+  
+            // Clear the toast when complete
+            if (percentCompleted === 100) {
+              toast.dismiss("upload-progress");
+              toast.success("Upload complete!");
+            }
+          },
+        }
+      );
+      toast.success("Video added successfully.");
       fetchVideos(selectedCategory);
       setShowModal(false);
     } catch (error) {
