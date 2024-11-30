@@ -80,7 +80,7 @@ const Courses = () => {
           <div key={video.id} className="col-md-4 col-sm-6 mb-4">
             <div className="card">
               <video className="card-img-top" controls>
-                <source src={video.video_url} type="video/mp4" />
+                <source src={video.url} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
               <div className="card-body text-center">

@@ -68,37 +68,35 @@ const ManageVideos = () => {
       return;
     }
 
+    // Validate video file for "add" mode
+    if (modalMode === "add" && !currentVideo.file) {
+      toast.error("Please select a video file.");
+      setLoading(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", currentVideo.title);
     formData.append("description", currentVideo.description || "");
     formData.append("video_order", currentVideo.video_order || 1);
     if (currentVideo.file) formData.append("video", currentVideo.file);
 
-  
     try {
-      await apiService.post(
-        `/categories/${selectedCategory}/videos`,
-        formData,
-        {
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            console.log(`Upload progress: ${percentCompleted}%`);
-            toast.info(`Upload progress: ${percentCompleted}%`, {
-              autoClose: false,
-              toastId: "upload-progress", // Use a unique ID for the progress toast
-            });
-  
-            // Clear the toast when complete
-            if (percentCompleted === 100) {
-              toast.dismiss("upload-progress");
-              toast.success("Upload complete!");
-            }
-          },
-        }
-      );
-      toast.success("Video added successfully.");
+      if (modalMode === "add") {
+        // API call for creating a new video
+        await apiService.post(
+          `/categories/${selectedCategory}/videos`,
+          formData
+        );
+        toast.success("Video added successfully.");
+      } else {
+        // API call for updating an existing video
+        await apiService.put(
+          `/categories/${selectedCategory}/videos/${currentVideo.id}`,
+          formData
+        );
+        toast.success("Video updated successfully.");
+      }
       fetchVideos(selectedCategory);
       setShowModal(false);
     } catch (error) {
@@ -239,7 +237,10 @@ const ManageVideos = () => {
               className="form-control"
               value={currentVideo.video_order}
               onChange={(e) =>
-                setCurrentVideo({ ...currentVideo, video_order: e.target.value })
+                setCurrentVideo({
+                  ...currentVideo,
+                  video_order: e.target.value,
+                })
               }
             />
           </div>
@@ -247,6 +248,18 @@ const ManageVideos = () => {
             <label htmlFor="file" className="form-label">
               Video File
             </label>
+            {modalMode === "edit" && currentVideo.video_url && (
+              <p>
+                Current File:{" "}
+                <a
+                  href={currentVideo.video_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {currentVideo.video_url.split("/").pop()}
+                </a>
+              </p>
+            )}
             <input
               type="file"
               id="file"
