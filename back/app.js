@@ -59,8 +59,8 @@ const testDbConnection = async () => {
   
   testDbConnection();
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-Server.timeout = 20 * 60 * 1000; // 1 second
+server.timeout = 20 * 60 * 1000; // 1 second
