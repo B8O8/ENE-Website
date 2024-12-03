@@ -39,10 +39,11 @@ const Courses = () => {
 
   // Handle video play
   const handlePlay = (index) => {
-    // Pause all other videos
+    // Pause and reset all other videos
     videoRefs.current.forEach((video, idx) => {
       if (idx !== index && video) {
         video.pause();
+        video.currentTime = 0; // Reset the video to the start
       }
     });
   };

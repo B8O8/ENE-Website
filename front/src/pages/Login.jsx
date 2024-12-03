@@ -38,10 +38,10 @@ const Login = () => {
 
       // Redirect based on the rank
       if (rank === "Admin") {
-        toast.success("Welcome, ${name}!");
+        toast.success(`Welcome, ${name}!`);
         navigate("/admin-dashboard");
       } else {
-        toast.success("Welcome, ${name}!");
+        toast.success(`Welcome, ${name}!`);
         navigate("/user-dashboard");
       }
     } catch (error) {
