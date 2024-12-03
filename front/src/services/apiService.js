@@ -12,15 +12,16 @@ const apiService = {
     }
   },
 
-  post: async (endpoint, data) => {
+  post: async (endpoint, data, config = {}) => {
     try {
-      const response = await axiosInstance.post(endpoint, data);
+      const response = await axiosInstance.post(endpoint, data, config);
       return response.data;
     } catch (error) {
       handleApiError(error);
       throw error;
     }
   },
+  
 
   put: async (endpoint, data) => {
     try {

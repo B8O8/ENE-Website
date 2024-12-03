@@ -31,17 +31,17 @@ const Login = () => {
 
       // Decode the token to get the rank/role
       const decoded = jwtDecode(token);
-      const { rank } = decoded;
+      const { rank, name } = decoded;
 
       // Store the token in localStorage
       localStorage.setItem("token", token);
 
       // Redirect based on the rank
       if (rank === "Admin") {
-        toast.success("Welcome, Admin!");
+        toast.success("Welcome, ${name}!");
         navigate("/admin-dashboard");
       } else {
-        toast.success("Welcome, User!");
+        toast.success("Welcome, ${name}!");
         navigate("/user-dashboard");
       }
     } catch (error) {

@@ -31,7 +31,7 @@ const PendingCommissions = () => {
 
   return (
     <div className="pending-commissions">
-      <h3 className="mb-4">Pending Commissions</h3>
+      <h3 className="mb-4 text-center">E-Comm</h3>
       {loading ? (
         <p>Loading commissions...</p>
       ) : commissions.length > 0 ? (

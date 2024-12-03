@@ -17,13 +17,13 @@ const calculateTeamACommissions = async (userId, subscriptionPrice, level) => {
 
   const referrerId = user[0].referred_by;
 
-  // Check if the referrer is Team A
+  // Check if the referrer is Ambassador
   const [referrer] = await User.findById(referrerId);
-  if (referrer.length && referrer[0].rank === "Team A") {
+  if (referrer.length && referrer[0].rank === "Ambassador") {
     // Correctly calculate 10% commission
     const teamACommission = Math.round(subscriptionPrice * 10) / 100;
 
-    // Add commission for the Team A user
+    // Add commission for the Ambassador user
     await Commissions.addCommission(
       referrerId,
       teamACommission,
@@ -64,10 +64,11 @@ const userController = {
       const hashedPassword = await authService.hashPassword(password);
 
       // Generate affiliate link for the new user
-      const affiliate_link = affiliateService.generateAffiliateLink(email);
+      const affiliate_link = await affiliateService.generateAffiliateLink(email);
 
       // Get the referring user's ID from the referral link
       let referringUserId = null;
+      
       if (ref) {
         referringUserId = await affiliateService.getReferringUserId(ref, db);
       }
@@ -195,9 +196,14 @@ const userController = {
 
       const user = rows[0];
 
-      // Check if the user is approved
-      if (user.status !== "Approved") {
-        return res.status(403).json({ error: "User is not approved by admin" });
+      // Check user status
+      if (user.status == "Pending") {
+        return res.status(403).json({ error: "Waiting for admin approval" });
+      }
+
+      
+      if (user.status == "Rejected") {
+        return res.status(403).json({ error: "You are not allowed to log in to the website. Please contact your referral." });
       }
 
       // Compare passwords
@@ -249,7 +255,7 @@ const userController = {
           1
         );
 
-        // Validate and calculate commissions for Team A users up to Level 20
+        // Validate and calculate commissions for Ambassador users up to Level 20
         await calculateTeamACommissions(
           referringUserId,
           subscription[0].price,
@@ -419,7 +425,7 @@ const userController = {
   getReferralTree: async (req, res) => {
     try {
       const userId = req.user.id; // Extract user ID from decoded token
-      const maxLevels = req.user.rank === "Team A" ? 20 : 5; // Determine max levels based on rank
+      const maxLevels = req.user.rank === "Ambassador" ? 20 : 5; // Determine max levels based on rank
   
       const referralTree = [];
       let currentLevel = [userId]; // Start with the user's ID

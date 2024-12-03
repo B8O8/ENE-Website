@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import apiService from "../../services/apiService";
-import VideoPlayerModal from "./VideoPlayerModal";
 
 const Courses = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [videos, setVideos] = useState([]);
   const [loadingVideos, setLoadingVideos] = useState(false);
-  const [showPlayer, setShowPlayer] = useState(false);
-  const [videoUrl, setVideoUrl] = useState("");
+  const videoRefs = useRef([]); // Reference to all video elements
 
   // Fetch all categories on load
   useEffect(() => {
@@ -39,13 +37,18 @@ const Courses = () => {
     }
   };
 
-  const handleVideoPlay = (url) => {
-    setVideoUrl(url);
-    setShowPlayer(true);
+  // Handle video play
+  const handlePlay = (index) => {
+    // Pause all other videos
+    videoRefs.current.forEach((video, idx) => {
+      if (idx !== index && video) {
+        video.pause();
+      }
+    });
   };
 
   return (
-    <div className="courses-tab p-4">
+    <div className="courses-tab p-4 text-center">
       <h3>Courses</h3>
 
       {/* Categories */}
@@ -68,44 +71,36 @@ const Courses = () => {
 
       {/* Videos */}
       {selectedCategory && (
-  <div className="videos mt-4">
-    <h4>Videos</h4>
-    {loadingVideos ? (
-      <p>Loading videos...</p>
-    ) : videos.length === 0 ? (
-      <p>No videos available in this category.</p>
-    ) : (
-      <div className="row">
-        {videos.map((video) => (
-          <div key={video.id} className="col-md-4 col-sm-6 mb-4">
-            <div className="card">
-              <video className="card-img-top" controls>
-                <source src={video.url} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <div className="card-body text-center">
-                <h5 className="card-title">{video.title}</h5>
-                <button
-                  className="btn btn-primary btn-sm mt-2"
-                  onClick={() => handleVideoPlay(video.url)}
-                >
-                  Play
-                </button>
-              </div>
+        <div className="videos mt-4">
+          <h4>Videos</h4>
+          {loadingVideos ? (
+            <p>Loading videos...</p>
+          ) : videos.length === 0 ? (
+            <p>No videos available in this category.</p>
+          ) : (
+            <div className="row">
+              {videos.map((video, index) => (
+                <div key={video.id} className="col-md-4 col-sm-6 mb-4">
+                  <div className="card">
+                    <video
+                      className="card-img-top"
+                      controls
+                      ref={(el) => (videoRefs.current[index] = el)} // Store ref
+                      onPlay={() => handlePlay(index)} // Call handlePlay on play
+                    >
+                      <source src={video.url} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                    <div className="card-body text-center">
+                      <h5 className="card-title">{video.title}</h5>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-)}
-
-      {/* Video Player Modal */}
-      <VideoPlayerModal
-        show={showPlayer}
-        videoUrl={videoUrl}
-        onClose={() => setShowPlayer(false)}
-      />
+          )}
+        </div>
+      )}
     </div>
   );
 };

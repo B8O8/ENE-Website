@@ -6,7 +6,7 @@ const seedAdmin = async () => {
     // Admin details
     const admin = {
       name: "Admin User",
-      email: "charbel_makhlouf76@live.com", // Change this to your preferred email
+      email: "admin@ene.ac", // Change this to your preferred email
       password: "password", // Change this to your preferred password
       rank: "Admin",
       status: "Approved",

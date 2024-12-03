@@ -226,6 +226,7 @@ const RegisterWithReferral = () => {
                 containerStyle={{
                   width: "100%",
                 }}
+                excludeCountries={["il"]}
               />
             </div>
           </div>
@@ -331,22 +332,19 @@ const RegisterWithReferral = () => {
 
       {/* Subscription Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Select Subscription Plan</Modal.Title>
+        <Modal.Header closeButton className="d-flex justify-content-center">
+          <Modal.Title className="text-center w-100">Select Subscription Plan</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="row">
             {plans.map((plan) => (
               <div className="col-12 mb-3" key={plan.id}>
                 <div className="card">
-                  <div className="card-body">
+                  <div className="card-body text-center">
                     <h5 className="card-title">{plan.name}</h5>
                     <p className="card-text">{plan.description}</p>
                     <p className="card-text">
                       <strong>Price:</strong> ${plan.price}
-                    </p>
-                    <p className="card-text">
-                      <strong>Duration:</strong> {plan.duration} days
                     </p>
                     <button
                       className="btn btn-primary w-100"

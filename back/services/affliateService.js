@@ -1,19 +1,56 @@
 const crypto = require("crypto");
+const db = require("../db/connection");
+
 
 const affiliateService = {
   // Generate a unique affiliate link
-  generateAffiliateLink: (userEmail) => {
-    const uniqueId = crypto.createHash("md5").update(userEmail).digest("hex");
-    return `https://ene.ac/register?ref=${uniqueId}`;
+  generateAffiliateLink: async (userEmail) => {
+    // Function to generate a random 6-digit number
+    const generateRandomId = () => Math.floor(100000 + Math.random() * 900000);
+  
+    let uniqueId = generateRandomId();
+    let isUnique = false;
+    let attempts = 0;
+  
+    // Ensure the ID is unique by checking the database
+    while (!isUnique) {
+      if (attempts > 100) throw new Error("Failed to generate a unique ID after 100 attempts");
+      attempts++;
+  
+      // Query to check for an existing affiliate link
+      const [rows] = await db.query(
+        "SELECT 1 FROM users WHERE affiliate_link LIKE ?",
+        [`%ref=${uniqueId}`]
+      );
+  
+      
+  
+      // Ensure the result is interpreted correctly
+      if (rows.length === 0) {
+        isUnique = true;
+      } else {
+        uniqueId = generateRandomId();
+        
+      }
+    }
+  
+    const affiliateLink = `https://ene.ac/register?ref=${uniqueId}`;
+    return affiliateLink;
   },
+  
 
   // Parse the referral link to get the referring user's ID
   getReferringUserId: async (ref, db) => {
-    const sql = "SELECT id FROM users WHERE MD5(email) = ?";
-    const [rows] = await db.execute(sql, [ref]);
+    // SQL to select the user who referred by the given referral code
+    const sql = "SELECT id FROM users WHERE affiliate_link LIKE ?";
+    
+    // Use the referral code to match against the affiliate_link
+    const [rows] = await db.execute(sql, [`%ref=${ref}`]);
+  
+    // Return the user's ID if found, otherwise return null
     return rows.length > 0 ? rows[0].id : null;
   },
-
+  
   // Track referrals and assign levels
   trackReferral: async (newUserId, referringUserId, db) => {
     let currentReferrer = referringUserId; // Start with the direct referrer

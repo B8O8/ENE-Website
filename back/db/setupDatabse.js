@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   address VARCHAR(255) DEFAULT NULL,
   profession VARCHAR(100) DEFAULT NULL,
   password VARCHAR(255) NOT NULL,
-  rank ENUM('Standard User', 'Team A', 'Board Member', 'Admin') DEFAULT 'Standard User',
+  rank ENUM('Standard User', 'Ambassador', 'Board Member', 'Admin') DEFAULT 'Standard User',
   affiliate_link VARCHAR(255) DEFAULT NULL,
   referred_by INT DEFAULT NULL,
   status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',

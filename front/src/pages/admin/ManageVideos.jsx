@@ -16,6 +16,7 @@ const ManageVideos = () => {
     file: null,
   });
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Fetch categories
   const fetchCategories = async () => {
@@ -61,6 +62,7 @@ const ManageVideos = () => {
   // Handle saving a video (add or edit)
   const saveVideo = async () => {
     setLoading(true);
+    setUploadProgress(0); // Reset progress
 
     if (!selectedCategory) {
       toast.error("Please select a category before uploading a video.");
@@ -68,7 +70,6 @@ const ManageVideos = () => {
       return;
     }
 
-    // Validate video file for "add" mode
     if (modalMode === "add" && !currentVideo.file) {
       toast.error("Please select a video file.");
       setLoading(false);
@@ -82,27 +83,38 @@ const ManageVideos = () => {
     if (currentVideo.file) formData.append("video", currentVideo.file);
 
     try {
+      const config = {
+        onUploadProgress: (progressEvent) => {
+          const percentage = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadProgress(percentage); // Update progress state
+        },
+      };
+
       if (modalMode === "add") {
-        // API call for creating a new video
         await apiService.post(
           `/categories/${selectedCategory}/videos`,
-          formData
+          formData,
+          config
         );
         toast.success("Video added successfully.");
       } else {
-        // API call for updating an existing video
         await apiService.put(
           `/categories/${selectedCategory}/videos/${currentVideo.id}`,
-          formData
+          formData,
+          config
         );
         toast.success("Video updated successfully.");
       }
+
       fetchVideos(selectedCategory);
       setShowModal(false);
     } catch (error) {
       toast.error("Failed to save video.");
     } finally {
       setLoading(false);
+      setUploadProgress(0); // Reset progress
     }
   };
 
@@ -275,7 +287,7 @@ const ManageVideos = () => {
             Cancel
           </Button>
           <Button variant="primary" onClick={saveVideo} disabled={loading}>
-            {loading ? "Saving..." : "Save"}
+            {loading ? `${uploadProgress}%` : "Save"}
           </Button>
         </Modal.Footer>
       </Modal>

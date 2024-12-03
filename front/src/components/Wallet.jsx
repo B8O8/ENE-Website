@@ -50,10 +50,7 @@ const Wallet = () => {
         style={{ fontSize: "1.5rem", marginRight: "0.5rem", color: "black", cursor: "pointer" }}
         onClick={() => setShowModal(true)}
       />
-      <span className="balance">
-        Wallet: <strong>${balance !== null ? balance.toFixed(2) : "Loading..."}</strong>
-      </span>
-
+      
       {/* Wallet Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
