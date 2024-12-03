@@ -124,7 +124,7 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
                 onChange={(e) => handleInputChange("rank", e.target.value)}
               >
                 <option value="Standard User">Standard User</option>
-                <option value="Team A">Team A</option>
+                <option value="Ambassador">Ambassador</option>
                 <option value="Board Member">Board Member</option>
                 <option value="Admin">Admin</option>
               </select>
