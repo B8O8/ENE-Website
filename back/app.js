@@ -5,6 +5,7 @@ const cors = require('cors');
 const path = require("path");
 const fs = require("fs"); // File system module
 require("./cron/transferCommission");
+require('./cron/signalCronJob');
 
 
 const userRoutes = require("./routes/userRoutes");

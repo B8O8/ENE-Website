@@ -97,6 +97,19 @@ CREATE TABLE videos (
 );
 `;
 
+const createSignalLogsTable = `
+CREATE TABLE signal_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  action ENUM('add_to_channel', 'remove_from_channel', 'reminder_sent') NOT NULL,
+  details TEXT DEFAULT NULL,
+  retry_count INT DEFAULT 0,
+  last_retry_at DATETIME DEFAULT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+`;
+
 
 // Function to execute the SQL queries
 const setupDatabase = async () => {
@@ -108,6 +121,7 @@ const setupDatabase = async () => {
     await db.execute(createWalletRequest);
     await db.execute(createCategoriesTable);
     await db.execute(createVideosTable);
+    await db.execute(createSignalLogsTable);
     console.log("Tables created successfully!");
   } catch (error) {
     console.error("Error creating tables:", error);
