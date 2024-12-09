@@ -10,9 +10,10 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
     phone: user?.phone || "",
     address: user?.address || "",
     rank: user?.rank || "",
-    date_of_birth: user?.date_of_birth || "",
+    date_of_birth: user?.date_of_birth ||  "",
     profession: user?.profession || "",
     subscription_id: user?.subscription_id || "",
+    status: user?.status || "",
   });
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -39,8 +40,15 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-    
-      await apiService.put(`/admin/${user.id}`, formFields);
+      
+      const updatedFields = {
+        ...formFields,
+        date_of_birth: formFields.date_of_birth
+          ? new Date(formFields.date_of_birth).toISOString().split("T")[0]
+          : null, // Send null if the date_of_birth is empty
+      };
+
+      await apiService.put(`/admin/${user.id}`, updatedFields);
       toast.success("User updated successfully!");
       onUpdate(); // Trigger a refresh in the parent component
       handleClose();
@@ -137,7 +145,10 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
                 type="date"
                 id="date_of_birth"
                 className="form-control"
-                value={formFields.date_of_birth}
+                value={formFields.date_of_birth ? new Date(formFields.date_of_birth)
+                  .toISOString()
+                  .split("T")[0]
+              : ""}
                 onChange={(e) =>
                   handleInputChange("date_of_birth", e.target.value)
                 }

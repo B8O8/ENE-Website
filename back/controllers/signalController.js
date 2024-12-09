@@ -1,5 +1,5 @@
 const Signal = require("../models/SignalModel");
-const User = require("../models/userModel");
+const User = require("../models/Users");
 const TelegramBot = require("node-telegram-bot-api");
 
 // Initialize the Telegram bot
