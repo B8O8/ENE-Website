@@ -16,6 +16,9 @@ const walletRequestController = {
       // Add the request to the database
       await WalletRequests.addRequest(userId, amount, type);
 
+      // Log the activity
+      await WalletRequests.logActivity(userId, type, amount, `User requested a ${type} of $${amount}`, "pending");
+
       // Send an email to the admin
       await emailHelpers.sendEmail(
         process.env.ADMIN_EMAIL,
@@ -50,6 +53,15 @@ const walletRequestController = {
       // Update the request status to approved
       await WalletRequests.approveRequest(requestId);
 
+      // Log the activity
+      await WalletRequests.logActivity(
+        request.user_id,
+        "withdraw_approve",
+        request.amount,
+        `Withdrawal of $${request.amount} approved by admin.`,
+        "completed"
+      );
+
       // Send an email to the user
       await emailHelpers.sendEmail(
         request.email,
@@ -79,6 +91,15 @@ const walletRequestController = {
 
       // Update the request status to rejected
       await WalletRequests.rejectRequest(requestId);
+
+      // Log the activity
+      await WalletRequests.logActivity(
+        request.user_id,
+        "withdraw_reject",
+        request.amount,
+        `Withdrawal of $${request.amount} rejected by admin.`,
+        "rejected"
+      );
 
       // Send an email to the user
       await emailHelpers.sendEmail(
@@ -114,6 +135,19 @@ const walletRequestController = {
     `;
     return db.execute(sql, [userId]);
   },
+
+  // Get all wallet logs
+  getAllLogs: async (req, res) => {
+    try {
+      const { limit = 50, offset = 0 } = req.query;
+      const [logs] = await WalletRequests.getAllWithdrawRequests("completed", parseInt(limit), parseInt(offset));
+      res.status(200).json(logs);
+    } catch (error) {
+      console.error("Error fetching all wallet logs:", error);
+      res.status(500).json({ error: "Failed to fetch wallet logs." });
+    }
+  },
+  
   
 };
 

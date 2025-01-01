@@ -10,9 +10,11 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
     phone: user?.phone || "",
     address: user?.address || "",
     rank: user?.rank || "",
-    date_of_birth: user?.date_of_birth || "",
+    date_of_birth: user?.date_of_birth ||  "",
     profession: user?.profession || "",
     subscription_id: user?.subscription_id || "",
+    status: user?.status || "",
+    subscription_expiry: user?.subscription_expiry || "",
   });
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -38,19 +40,25 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-    
-      await apiService.put(`/admin/${user.id}`, formFields);
+      const updatedFields = {
+        ...formFields,
+        date_of_birth: formFields.date_of_birth
+          ? new Date(formFields.date_of_birth).toISOString().split("T")[0]
+          : null, // Format date_of_birth as YYYY-MM-DD
+        subscription_expiry: formFields.subscription_expiry || null, // Keep null if empty
+      };
+  
+      await apiService.put(`/admin/${user.id}`, updatedFields);
       toast.success("User updated successfully!");
       onUpdate(); // Trigger a refresh in the parent component
       handleClose();
     } catch (error) {
-      
       toast.error("Failed to update user.");
     } finally {
       setLoading(false);
     }
   };
+  
   
 
   return (
@@ -137,7 +145,10 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
                 type="date"
                 id="date_of_birth"
                 className="form-control"
-                value={formFields.date_of_birth}
+                value={formFields.date_of_birth ? new Date(formFields.date_of_birth)
+                  .toISOString()
+                  .split("T")[0]
+              : ""}
                 onChange={(e) =>
                   handleInputChange("date_of_birth", e.target.value)
                 }
@@ -178,6 +189,27 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
               </select>
             </div>
           </div>
+          <div className="row mb-3">
+            <div className="col-md-12 col-sm-12">
+              <label htmlFor="subscription_expiry" className="form-label">
+                Subscription Expiry
+              </label>
+              <input
+  type="datetime-local"
+  id="subscription_expiry"
+  className="form-control"
+  value={
+    formFields.subscription_expiry
+      ? new Date(formFields.subscription_expiry).toISOString().slice(0, 16) // Ensures proper formatting
+      : ""
+  }
+  onChange={(e) => handleInputChange("subscription_expiry", e.target.value)}
+/>
+
+
+            </div>
+          </div>
+
         </form>
       </Modal.Body>
       <Modal.Footer>

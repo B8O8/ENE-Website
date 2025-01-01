@@ -44,7 +44,6 @@ const ManageVideos = () => {
 
   // Handle category change
   const handleCategoryChange = (categoryId) => {
-    console.log("Selected category ID:", categoryId); // Debugging
     setSelectedCategory(categoryId);
     fetchVideos(categoryId);
   };

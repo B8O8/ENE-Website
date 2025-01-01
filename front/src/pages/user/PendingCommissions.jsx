@@ -19,6 +19,7 @@ const PendingCommissions = () => {
         });
 
         setCommissions(response);
+        
       } catch (error) {
         console.error("Error fetching commissions:", error);
       } finally {
@@ -41,8 +42,8 @@ const PendingCommissions = () => {
               <th>#</th>
               <th>Date Earned</th>
               <th>Amount</th>
-              <th>Type</th>
               <th>Level</th>
+              <th>Type</th>
               <th>Transfer Date</th>
             </tr>
           </thead>

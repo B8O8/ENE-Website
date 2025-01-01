@@ -1,13 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import apiService from "../../services/apiService";
+import { Modal, Button } from "react-bootstrap";
+import {jwtDecode} from "jwt-decode";
 
 const Courses = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [videos, setVideos] = useState([]);
   const [loadingVideos, setLoadingVideos] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const videoRefs = useRef([]); // Reference to all video elements
+
+  // Check if the user is VIP
+  const token = localStorage.getItem("token");
+  let isVip = false;
+
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      isVip = decoded.is_vip === 1;
+      console.log("Decoded token:", decoded);
+      console.log("isVip value:", isVip);
+    } catch (error) {
+      console.error("Failed to decode token:", error);
+    }
+  }
 
   // Fetch all categories on load
   useEffect(() => {
@@ -24,12 +42,17 @@ const Courses = () => {
   }, []);
 
   // Fetch videos for a specific category
-  const fetchVideos = async (categoryId) => {
+  const fetchVideos = async (category) => {
+    if (category.is_vip_only && !isVip) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
     setLoadingVideos(true);
     try {
-      const response = await apiService.get(`/categories/${categoryId}/videos`);
+      const response = await apiService.get(`/categories/${category.id}/videos`);
       setVideos(response);
-      setSelectedCategory(categoryId);
+      setSelectedCategory(category.id);
     } catch (error) {
       toast.error("Failed to fetch videos");
     } finally {
@@ -62,9 +85,12 @@ const Courses = () => {
               className={`list-group-item ${
                 selectedCategory === category.id ? "active" : ""
               }`}
-              onClick={() => fetchVideos(category.id)}
+              onClick={() => fetchVideos(category)}
             >
-              {category.name}
+              {category.name}{" "}
+              {category.is_vip_only && (
+                <span className="badge bg-warning ms-2">VIP</span>
+              )}
             </li>
           ))}
         </ul>
@@ -102,6 +128,33 @@ const Courses = () => {
           )}
         </div>
       )}
+
+      {/* Upgrade Modal */}
+      <Modal show={showUpgradeModal} onHide={() => setShowUpgradeModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Upgrade to VIP</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            This category is restricted to VIP members only. Upgrade your
+            subscription to access this content.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowUpgradeModal(false)}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setShowUpgradeModal(false);
+              toast.info("Redirecting to subscription page...");
+            }}
+          >
+            Upgrade Now
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

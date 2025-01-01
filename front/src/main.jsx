@@ -11,17 +11,15 @@ createRoot(document.getElementById("root")).render(
     
     <App />
     <ToastContainer
-      position="bottom-left"
-      autoClose={5000}
+      position="bottom-right"
+      autoClose={2000}
       hideProgressBar={false}
       newestOnTop={false}
       closeOnClick
       rtl={false}
-      pauseOnFocusLoss
       draggable
-      pauseOnHover
       theme="dark" // Or "light"
-      limit={3} // Maximum number of toasts visible at a time
+      limit={1} // Maximum number of toasts visible at a time
     />
   </StrictMode>
 );

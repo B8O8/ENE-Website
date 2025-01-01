@@ -51,6 +51,58 @@ const WalletRequests = {
     `;
     return db.execute(sql, [requestId]);
   },
+
+  // Log wallet activity
+logActivity: (userId, activityType, amount, description, status = 'pending') => {
+  const sql = `
+    INSERT INTO wallet_activity (user_id, activity_type, amount, description, status)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+  return db.execute(sql, [userId, activityType, amount, description, status]);
+},
+
+// Fetch all withdrawal requests (admin)
+getAllWithdrawRequests: (status, limit = 50, offset = 0) => {
+  const sql = `
+    SELECT wallet_activity.*, users.name AS user_name, users.email AS user_email
+    FROM wallet_activity
+    JOIN users ON wallet_activity.user_id = users.id
+    WHERE wallet_activity.activity_type = 'withdraw_request' AND wallet_activity.status = ?
+    ORDER BY wallet_activity.created_at DESC
+    LIMIT ? OFFSET ?
+  `;
+  return db.execute(sql, [status, limit, offset]);
+},
+
+
+// Approve or reject a withdrawal request
+updateWithdrawRequestStatus: (requestId, status) => {
+  const sql = `
+    UPDATE wallet_activity
+    SET status = ?
+    WHERE id = ?
+  `;
+  return db.execute(sql, [status, requestId]);
+},
+
+// Get wallet totals
+getUserWalletActivity: (userId) => {
+  const sql = `
+    SELECT 
+      id, 
+      activity_type, 
+      CAST(amount AS DECIMAL(10,2)) AS amount, 
+      description, 
+      status, 
+      created_at 
+    FROM wallet_activity
+    WHERE user_id = ?
+    ORDER BY created_at DESC
+  `;
+  return db.execute(sql, [userId]);
+},
+
+
 };
 
 module.exports = WalletRequests;

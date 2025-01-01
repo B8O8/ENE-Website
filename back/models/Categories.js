@@ -2,17 +2,21 @@ const db = require("../db/connection");
 
 const Categories = {
   // Create a new category
-  create: ({ name, description }) => {
+  create: ({ name, description, is_vip_only }) => {
     const sql = `
-      INSERT INTO categories (name, description)
-      VALUES (?, ?)
+      INSERT INTO categories (name, description, is_vip_only)
+      VALUES (?, ?, ?)
     `;
-    return db.execute(sql, [name, description]);
+    return db.execute(sql, [name, description, is_vip_only]);
   },
 
   // Get all categories
   getAll: () => {
-    const sql = `SELECT * FROM categories ORDER BY created_at DESC`;
+    const sql = `
+      SELECT id, name, description, is_vip_only, created_at
+      FROM categories
+      ORDER BY created_at ASC
+    `;
     return db.execute(sql);
   },
 
@@ -23,13 +27,13 @@ const Categories = {
   },
 
   // Update a category
-  update: (id, { name, description }) => {
+  update: (id, { name, description, is_vip_only }) => {
     const sql = `
       UPDATE categories
-      SET name = ?, description = ?
+      SET name = ?, description = ?, is_vip_only = ?
       WHERE id = ?
     `;
-    return db.execute(sql, [name, description, id]);
+    return db.execute(sql, [name, description, is_vip_only, id]);
   },
 
   // Delete a category

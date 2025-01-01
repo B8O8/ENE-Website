@@ -3,17 +3,17 @@ const nodemailer = require("nodemailer");
 const emailHelpers = {
   sendResetEmail: async (to, resetLink) => {
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST, // Use the SMTP server host from .env
-      port: process.env.EMAIL_PORT, // Use the SMTP port from .env
-      secure: process.env.EMAIL_SECURE === "true", // Use TLS (true for port 465, false for others)
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      secure: process.env.EMAIL_SECURE === "true", // Use TLS
       auth: {
-        user: process.env.EMAIL_USER, // Your email username from .env
-        pass: process.env.EMAIL_PASS, // Your email password from .env
+        user: process.env.EMAIL_USER, // Default email (noreply@ene.ac)
+        pass: process.env.EMAIL_PASS,
       },
     });
 
     const mailOptions = {
-      from: `"ENE Support" <${process.env.EMAIL_USER}>`, // Sender address
+      from: `"ENE Support" <${process.env.EMAIL_USER}>`, // Default "noreply@ene.ac"
       to,
       subject: "Password Reset Request",
       html: `<p>You requested a password reset. Click the link below to reset your password:</p>
@@ -24,19 +24,19 @@ const emailHelpers = {
     return transporter.sendMail(mailOptions);
   },
 
-  sendEmail: async (to, subject, htmlContent) => {
+  sendEmail: async (to, subject, htmlContent, from = process.env.EMAIL_USER) => {
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST, // Use the SMTP server host from .env
-      port: process.env.EMAIL_PORT, // Use the SMTP port from .env
-      secure: process.env.EMAIL_SECURE === "true", // Use TLS (true for port 465, false for others)
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      secure: process.env.EMAIL_SECURE === "true", // Use TLS
       auth: {
-        user: process.env.EMAIL_USER, // Your email username from .env
-        pass: process.env.EMAIL_PASS, // Your email password from .env
+        user: from,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
     const mailOptions = {
-      from: `"ENE Support" <${process.env.EMAIL_USER}>`, // Sender address
+      from: `"ENE Team" <${from}>`, // Custom "from" address
       to,
       subject,
       html: htmlContent,

@@ -1,47 +1,59 @@
 import React from "react";
-import { Link, useNavigate  } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCartShopping,
-  faTree,
+  faNetworkWired,
   faFilm,
   faSignal,
   faUser,
   faGaugeHigh,
   faSignOutAlt,
+  faFile,
 } from "@fortawesome/free-solid-svg-icons";
 import {jwtDecode} from "jwt-decode";
+import { Modal, Button } from "react-bootstrap";
 
 const UserSidebar = ({ isOpen, setIsOpen }) => {
   const navigate = useNavigate();
+  const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
+
+  // Decode the token to check for VIP status
+  const token = localStorage.getItem("token");
+  let isVip = false;
+
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      isVip = decoded.is_vip === 1; // Check if the user is a VIP
+      // Add logic to restrict access based on isVip
+    } catch (error) {
+      console.error("Failed to decode token:", error);
+    }
+  }
+  
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove the token from local storage
-    navigate("/login"); // Redirect to login page
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
-  // Decode the token to check if the user is an admin
-  const token = localStorage.getItem("token");
-  let isAdmin = false;
-
-  if (token) {
-    try {
-      const decoded = jwtDecode(token);
-      isAdmin = decoded.rank === "Admin"; // Check if the user is an admin
-    } catch (error) {
-      console.error("Failed to decode token:", error);
+  const handleLibraryClick = (e) => {
+    if (!isVip) {
+      e.preventDefault(); // Prevent navigation
+      setShowUpgradeModal(true); // Show the upgrade modal
     }
-  }
+  };
 
   return (
     <div
       className="sidebar bg-dark text-white vh-100 position-fixed top-0 start-0"
       style={{
-        width: isOpen ? "250px" : "60px", // Dynamic width
+        width: isOpen ? "250px" : "60px",
         overflowX: "hidden",
         transition: "width 0.3s ease-in-out",
         zIndex: 1040,
@@ -56,10 +68,15 @@ const UserSidebar = ({ isOpen, setIsOpen }) => {
           className="text-center mb-0"
           style={{
             fontSize: "1.2rem",
-            display: isOpen ? "block" : "none", // Hide when closed
+            display: isOpen ? "block" : "none",
           }}
         >
-          User Dashboard
+          <Link
+            to="/user-dashboard"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            User Dashboard
+          </Link>
         </h3>
 
         {/* Toggle Button */}
@@ -96,7 +113,7 @@ const UserSidebar = ({ isOpen, setIsOpen }) => {
             to="/user-dashboard/referrals"
             className="nav-link text-white d-flex align-items-center"
           >
-            <FontAwesomeIcon icon={faTree} className="me-2" />
+            <FontAwesomeIcon icon={faNetworkWired} className="me-2" />
             {isOpen && "Referral Tree"}
           </Link>
         </li>
@@ -111,7 +128,7 @@ const UserSidebar = ({ isOpen, setIsOpen }) => {
         </li>
         <li className="nav-item mb-3">
           <Link
-            to="https://t.me/Hello_ENE"
+            to="/user-dashboard/signal"
             className="nav-link text-white d-flex align-items-center"
           >
             <FontAwesomeIcon icon={faSignal} className="me-2" />
@@ -127,20 +144,17 @@ const UserSidebar = ({ isOpen, setIsOpen }) => {
             {isOpen && "Profile"}
           </Link>
         </li>
-
-         {/* Admin Dashboard Link (only for admins) */}
-         {isAdmin && (
-          <li className="nav-item mb-3">
-            <Link
-              to="/admin-dashboard"
-              className="nav-link text-white d-flex align-items-center"
-            >
-              <FontAwesomeIcon icon={faGaugeHigh} className="me-2" />
-              {isOpen && "Admin Dashboard"}
-            </Link>
-          </li>
-        )}
-
+        {/* Library Link */}
+        <li className="nav-item mb-3">
+          <Link
+            to="/user-dashboard/library"
+            className="nav-link text-white d-flex align-items-center"
+            onClick={handleLibraryClick}
+          >
+            <FontAwesomeIcon icon={faFile} className="me-2" />
+            {isOpen && "Library"}
+          </Link>
+        </li>
         {/* Logout Button */}
         <li className="nav-item mt-auto">
           <button
@@ -151,8 +165,35 @@ const UserSidebar = ({ isOpen, setIsOpen }) => {
             {isOpen && "Logout"}
           </button>
         </li>
-
       </ul>
+
+      {/* Upgrade to VIP Modal */}
+      <Modal
+        show={showUpgradeModal}
+        onHide={() => setShowUpgradeModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Upgrade to VIP</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>You need to upgrade to a VIP plan to access the Library.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowUpgradeModal(false)}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setShowUpgradeModal(false);
+              navigate("/user-dashboard/subscriptions");
+            }}
+          >
+            Upgrade Now
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

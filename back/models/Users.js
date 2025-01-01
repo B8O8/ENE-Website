@@ -21,20 +21,26 @@ const User = {
     return db.execute(sql, [name, phone, date_of_birth, address, profession, userId]);
   },
 
-  updateUserAdmin: (userId, { name, email, phone, date_of_birth, address, profession, rank, subscription_id, status }) => {
+  updateUserAdmin: (userId, { name, email, phone, date_of_birth, address, profession, rank, subscription_id, status, subscription_expiry }) => {
     const sql = `
       UPDATE users
-      SET name = ?, email = ?, phone = ?, date_of_birth = ?, address = ?, profession = ?, rank = ?, subscription_id = ?, status = ?
+      SET name = ?, email = ?, phone = ?, date_of_birth = ?, address = ?, profession = ?, rank = ?, subscription_id = ?, status = ?, subscription_expiry = ?
       WHERE id = ?
     `;
-    return db.execute(sql, [name, email, phone, date_of_birth, address, profession, rank, subscription_id, status, userId]);
+    return db.execute(sql, [name, email, phone, date_of_birth, address, profession, rank, subscription_id, status, subscription_expiry, userId]);
   },
 
   // Find a user by email
   findByEmail: (email) => {
-    const sql = `SELECT * FROM users WHERE email = ?`;
+    const sql = `
+      SELECT u.id, u.email, u.name, u.rank, u.password, u.status, u.subscription_id, s.is_vip
+      FROM users u
+      LEFT JOIN subscriptions s ON u.subscription_id = s.id
+      WHERE u.email = ?
+    `;
     return db.execute(sql, [email]);
   },
+  
 
   // Approve a user
   approve: (userId) => {

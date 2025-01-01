@@ -1,4 +1,7 @@
 const User = require("../models/Users");
+const Commissions = require("../models/Commissions");
+const WalletRequests = require("../models/WalletRequests");
+
 
 const walletController = {
   // Get wallet balance
@@ -59,6 +62,44 @@ const walletController = {
     } catch (error) {
       console.error("Error processing withdrawal:", error);
       res.status(500).json({ error: "Failed to process withdrawal" });
+    }
+  },
+
+  // Get wallet activity for a specific user
+  getUserWalletLogs: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const [logs] = await WalletRequests.getUserWalletActivity(userId);
+  
+      res.status(200).json(logs);
+    } catch (error) {
+      console.error("Error fetching wallet activity logs:", error);
+      res.status(500).json({ error: "Failed to fetch wallet activity logs." });
+    }
+  },
+
+
+
+  // Get all wallet activity (admin view)
+  getAllWalletActivity: async (req, res) => {
+    try {
+      const { limit = 50, offset = 0 } = req.query;
+      const [activity] = await Commissions.getAllWalletActivity(parseInt(limit), parseInt(offset));
+      res.status(200).json(activity);
+    } catch (error) {
+      console.error("Error fetching all wallet activity:", error);
+      res.status(500).json({ error: "Failed to fetch wallet activity." });
+    }
+  },
+
+  // Get aggregated wallet totals (admin view)
+  getWalletTotals: async (req, res) => {
+    try {
+      const [totals] = await Commissions.getAggregatedWalletTotals();
+      res.status(200).json(totals[0]); // Return the first row with totals
+    } catch (error) {
+      console.error("Error fetching wallet totals:", error);
+      res.status(500).json({ error: "Failed to fetch wallet totals." });
     }
   },
 };

@@ -1,10 +1,11 @@
 const Categories = require("../models/Categories");
 
 const categoryController = {
+  // Create a new category
   createCategory: async (req, res) => {
     try {
-      const { name, description } = req.body;
-      const [result] = await Categories.create({ name, description });
+      const { name, description, is_vip_only } = req.body;
+      const [result] = await Categories.create({ name, description, is_vip_only });
 
       res.status(201).json({ message: "Category created successfully", categoryId: result.insertId });
     } catch (error) {
@@ -13,6 +14,7 @@ const categoryController = {
     }
   },
 
+  // Get all categories
   getCategories: async (req, res) => {
     try {
       const [categories] = await Categories.getAll();
@@ -23,12 +25,13 @@ const categoryController = {
     }
   },
 
+  // Update a category
   updateCategory: async (req, res) => {
     try {
       const { id } = req.params;
-      const { name, description } = req.body;
+      const { name, description, is_vip_only } = req.body;
 
-      const [result] = await Categories.update(id, { name, description });
+      const [result] = await Categories.update(id, { name, description, is_vip_only });
       if (result.affectedRows === 0) {
         return res.status(404).json({ error: "Category not found" });
       }
@@ -40,6 +43,7 @@ const categoryController = {
     }
   },
 
+  // Delete a category
   deleteCategory: async (req, res) => {
     try {
       const { id } = req.params;
