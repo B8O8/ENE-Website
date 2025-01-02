@@ -514,43 +514,42 @@ const userController = {
 
   // Get Referral Tree
   getReferralTree: async (req, res) => {
-    try {
-      const userId = req.user.id; // Extract user ID from decoded token
-      const maxLevels = req.user.rank === "Ambassador" ? 20 : 5; // Determine max levels based on rank
+try {
+    if (!req.user || !req.user.id) {
+        return res.status(400).json({ error: "Invalid user data in request." });
+    }
 
-      const referralTree = [];
-      let currentLevel = [userId]; // Start with the user's ID
+    const userId = req.user.id;
+    const maxLevels = req.user.rank === "Ambassador" ? 20 : 5;
 
-      // Loop through levels to build the referral tree
-      for (let level = 1; level <= maxLevels; level++) {
-        // Build a SQL-safe comma-separated string for the IN clause
+    const referralTree = [];
+    let currentLevel = [userId];
+
+    for (let level = 1; level <= maxLevels; level++) {
         const placeholders = currentLevel.map(() => "?").join(",");
         const sql = `
-          SELECT al.referred_id AS user_id, u.name AS username
-          FROM affiliate_levels al
-          JOIN users u ON al.referred_id = u.id
-          WHERE al.user_id IN (${placeholders})
-          AND al.level = ?
+            SELECT al.referred_id AS user_id, u.name AS username
+            FROM affiliate_levels al
+            JOIN users u ON al.referred_id = u.id
+            WHERE al.user_id IN (${placeholders})
+            AND al.level = ?
         `;
         const params = [...currentLevel, level];
 
-        // Execute the SQL query
         const [referrals] = await db.execute(sql, params);
 
-        if (referrals.length === 0) break; // Exit loop if no more referrals
+        if (referrals.length === 0) break;
 
         referralTree.push({ level, referrals });
-        currentLevel = referrals.map((referral) => referral.user_id); // Prepare for the next level
-      }
-
-      res.status(200).json(referralTree); // Return referral tree
-    } catch (error) {
-      console.error("Error fetching referral tree:", error);
-      res
-        .status(500)
-        .json({ error: error.message || "Failed to fetch referral tree" });
+        currentLevel = referrals.map((referral) => referral.user_id);
     }
-  },
+
+    res.status(200).json(referralTree);
+} catch (error) {
+    console.error("Error fetching referral tree:", error);
+    res.status(500).json({ error: error.message || "Failed to fetch referral tree" });
+}
+
 
   // Get Notifications
   getNotifications: async (req, res) => {

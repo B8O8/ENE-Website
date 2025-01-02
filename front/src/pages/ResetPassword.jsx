@@ -11,9 +11,9 @@ const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleResetPassword = async (e) => {
-    const navigate = useNavigate(); // Initialize useNavigate
     e.preventDefault();
 
     if (!newPassword || !confirmPassword) {

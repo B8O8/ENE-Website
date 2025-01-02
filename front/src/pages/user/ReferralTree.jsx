@@ -12,6 +12,7 @@ const ReferralTree = () => {
       setLoading(true);
       try {
         const response = await apiService.get("/dashboard/referrals");
+        console.log(response);
         setReferralTree(response);
       } catch (error) {
         toast.error("Failed to fetch referral tree");
