@@ -20,6 +20,12 @@ import Courses from "./pages/user/Courses.jsx";
 import UserProfile from "./components/UserProfile.jsx";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import SignalTab from "./pages/user/SignalTab"; 
+import ManageSignals from "./pages/admin/ManageSignals";
+import AdminDashboardReports from "./pages/admin/AdminDashboardReports";
+import UserDashboardReports from "./pages/user/UserDashboardReports.jsx";
+import ManageLibrary from "./pages/admin/ManageLibrary.jsx";
+import Library from "./pages/user/Library.jsx";
 
 const App = () => {
   return (
@@ -40,10 +46,13 @@ const App = () => {
             </ProtectedRoute>
           }
         >
+          <Route index element={<UserDashboardReports />} />
           <Route path="commissions" element={<PendingCommissions />} />
           <Route path="referrals" element={<ReferralTree />} />
           <Route path="courses" element={<Courses />} />
           <Route path="profile" element={<UserProfile />} />
+          <Route path="signal" element={<SignalTab />} />
+          <Route path="library" element={<Library />} />
         </Route>
 
         {/* Admin Routes */}
@@ -55,11 +64,14 @@ const App = () => {
             </AdminRoute>
           }
         >
+          <Route index element={<AdminDashboardReports />} />
           <Route path="users" element={<ManageUsers />} />
           <Route path="subscriptions" element={<ManageSubscriptions />} />
           <Route path="wallet-requests" element={<WalletRequests />} />
           <Route path="categories" element={<ManageCategories />} />
           <Route path="videos" element={<ManageVideos />} />
+          <Route path="signals" element={<ManageSignals />} />
+          <Route path="library" element={<ManageLibrary />} />
         </Route>
       </Routes>
     </Router>

@@ -4,15 +4,22 @@ const Subscription = {
   // Create a new subscription
   create: (data) => {
     const sql = `
-      INSERT INTO subscriptions (name, description, price, duration)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO subscriptions (name, description, price, duration, is_vip, is_hide)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
-    return db.execute(sql, [data.name, data.description, data.price, data.duration]);
+    return db.execute(sql, [
+      data.name,
+      data.description,
+      data.price,
+      data.duration,
+      data.is_vip || 0,
+      data.is_hide || 0,
+    ]);
   },
 
-  // Get all subscriptions
+  // Get all subscriptions that are not hidden
   getAll: () => {
-    const sql = `SELECT * FROM subscriptions`;
+    const sql = `SELECT * FROM subscriptions WHERE is_hide = 0`;
     return db.execute(sql);
   },
 
@@ -26,10 +33,18 @@ const Subscription = {
   update: (id, data) => {
     const sql = `
       UPDATE subscriptions
-      SET name = ?, description = ?, price = ?, duration = ?
+      SET name = ?, description = ?, price = ?, duration = ?, is_vip = ?, is_hide = ?
       WHERE id = ?
     `;
-    return db.execute(sql, [data.name, data.description, data.price, data.duration, id]);
+    return db.execute(sql, [
+      data.name,
+      data.description,
+      data.price,
+      data.duration,
+      data.is_vip || 0,
+      data.is_hide || 0,
+      id,
+    ]);
   },
 
   // Delete a subscription

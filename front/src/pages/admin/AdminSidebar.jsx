@@ -1,7 +1,17 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers, faWallet, faFilm, faTags, faList, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUsers,
+  faWallet,
+  faFilm,
+  faTags,
+  faList,
+  faUser,
+  faSignOutAlt,
+  faSignal,
+  faFile,
+} from "@fortawesome/free-solid-svg-icons";
 
 const AdminSidebar = ({ isOpen, setIsOpen }) => {
   const navigate = useNavigate();
@@ -37,7 +47,12 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
             display: isOpen ? "block" : "none", // Hide when closed
           }}
         >
-          Admin Dashboard
+          <Link
+            to="/admin-dashboard"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            Admin Dashboard
+          </Link>
         </h3>
 
         {/* Toggle Button */}
@@ -61,38 +76,75 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
       {/* Sidebar Links */}
       <ul className="nav flex-column mt-3">
         <li className="nav-item mb-3">
-          <Link to="/admin-dashboard/users" className="nav-link text-white d-flex align-items-center">
+          <Link
+            to="/admin-dashboard/users"
+            className="nav-link text-white d-flex align-items-center"
+          >
             <FontAwesomeIcon icon={faUsers} className="me-2" />
             {isOpen && "Manage Users"}
           </Link>
         </li>
+
         <li className="nav-item mb-3">
-          <Link to="/admin-dashboard/subscriptions" className="nav-link text-white d-flex align-items-center">
+          <Link
+            to="/admin-dashboard/signals"
+            className="nav-link text-white d-flex align-items-center"
+          >
+            <FontAwesomeIcon icon={faSignal} className="me-2" />
+            {isOpen && "Manage Signals"}
+          </Link>
+        </li>
+        <li className="nav-item mb-3">
+          <Link
+            to="/admin-dashboard/subscriptions"
+            className="nav-link text-white d-flex align-items-center"
+          >
             <FontAwesomeIcon icon={faList} className="me-2" />
             {isOpen && "Manage Subscriptions"}
           </Link>
         </li>
         <li className="nav-item mb-3">
-          <Link to="/admin-dashboard/wallet-requests" className="nav-link text-white d-flex align-items-center">
+          <Link
+            to="/admin-dashboard/wallet-requests"
+            className="nav-link text-white d-flex align-items-center"
+          >
             <FontAwesomeIcon icon={faWallet} className="me-2" />
             {isOpen && "Wallet Requests"}
           </Link>
         </li>
         <li className="nav-item mb-3">
-          <Link to="/admin-dashboard/categories" className="nav-link text-white d-flex align-items-center">
+          <Link
+            to="/admin-dashboard/categories"
+            className="nav-link text-white d-flex align-items-center"
+          >
             <FontAwesomeIcon icon={faTags} className="me-2" />
             {isOpen && "Manage Categories"}
           </Link>
         </li>
         <li className="nav-item mb-3">
-          <Link to="/admin-dashboard/videos" className="nav-link text-white d-flex align-items-center">
+          <Link
+            to="/admin-dashboard/videos"
+            className="nav-link text-white d-flex align-items-center"
+          >
             <FontAwesomeIcon icon={faFilm} className="me-2" />
             {isOpen && "Manage Videos"}
           </Link>
         </li>
+        <li className="nav-item mb-3">
+          <Link
+            to="/admin-dashboard/library"
+            className="nav-link text-white d-flex align-items-center"
+          >
+            <FontAwesomeIcon icon={faFile} className="me-2" />
+            {isOpen && "Manage Library"}
+          </Link>
+        </li>
         {/* User Dashboard Link */}
         <li className="nav-item mb-3">
-          <Link to="/user-dashboard" className="nav-link text-white d-flex align-items-center">
+          <Link
+            to="/user-dashboard"
+            className="nav-link text-white d-flex align-items-center"
+          >
             <FontAwesomeIcon icon={faUser} className="me-2" />
             {isOpen && "User Dashboard"}
           </Link>

@@ -21,7 +21,7 @@ const authService = {
     }
 
     return jwt.sign(
-      { id: user.id, email: user.email, rank: user.rank, name: user.name },
+      { id: user.id, email: user.email, rank: user.rank, name: user.name, subscription_id: user.subscription_id,is_vip: user.is_vip, },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || "1h" } // Default to 1 hour if not defined
     );

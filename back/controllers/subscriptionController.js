@@ -4,13 +4,13 @@ const subscriptionController = {
   // Create a new subscription
   createSubscription: async (req, res) => {
     try {
-      const { name, description, price, duration } = req.body;
+      const { name, description, price, duration, is_vip, is_hide } = req.body;
 
       if (!name || !price || !duration) {
         return res.status(400).json({ error: "Name, price, and duration are required" });
       }
 
-      const [result] = await Subscription.create({ name, description, price, duration });
+      const [result] = await Subscription.create({ name, description, price, duration, is_vip, is_hide });
       res.status(201).json({ message: "Subscription created successfully", subscriptionId: result.insertId });
     } catch (error) {
       console.error("Error creating subscription:", error);
@@ -50,13 +50,13 @@ const subscriptionController = {
   updateSubscription: async (req, res) => {
     try {
       const { id } = req.params;
-      const { name, description, price, duration } = req.body;
+      const { name, description, price, duration, is_vip, is_hide } = req.body;
 
       if (!name || !price || !duration) {
         return res.status(400).json({ error: "Name, price, and duration are required" });
       }
 
-      const [result] = await Subscription.update(id, { name, description, price, duration });
+      const [result] = await Subscription.update(id, { name, description, price, duration, is_vip, is_hide });
       if (result.affectedRows === 0) {
         return res.status(404).json({ error: "Subscription not found" });
       }

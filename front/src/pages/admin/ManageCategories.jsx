@@ -8,7 +8,11 @@ const ManageCategories = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState("add"); // "add" or "edit"
-  const [currentCategory, setCurrentCategory] = useState({ name: "", description: "" });
+  const [currentCategory, setCurrentCategory] = useState({
+    name: "",
+    description: "",
+    is_vip_only: false,
+  });
 
   // Fetch all categories
   const fetchCategories = async () => {
@@ -28,7 +32,7 @@ const ManageCategories = () => {
   }, []);
 
   // Handle opening the modal
-  const openModal = (mode, category = { name: "", description: "" }) => {
+  const openModal = (mode, category = { name: "", description: "", is_vip_only: false }) => {
     setModalMode(mode);
     setCurrentCategory(category);
     setShowModal(true);
@@ -73,10 +77,7 @@ const ManageCategories = () => {
   return (
     <div className="container mt-4">
       <h3>Manage Categories</h3>
-      <Button
-        className="mb-3"
-        onClick={() => openModal("add")}
-      >
+      <Button className="mb-3" onClick={() => openModal("add")}>
         Add Category
       </Button>
       <table className="table table-striped">
@@ -85,6 +86,7 @@ const ManageCategories = () => {
             <th>#</th>
             <th>Name</th>
             <th>Description</th>
+            <th>VIP Only</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -94,6 +96,7 @@ const ManageCategories = () => {
               <td>{index + 1}</td>
               <td>{category.name}</td>
               <td>{category.description}</td>
+              <td>{category.is_vip_only ? "Yes" : "No"}</td>
               <td>
                 <Button
                   variant="primary"
@@ -148,6 +151,20 @@ const ManageCategories = () => {
                 setCurrentCategory({ ...currentCategory, description: e.target.value })
               }
             ></textarea>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="is_vip_only" className="form-label">
+              <input
+                type="checkbox"
+                id="is_vip_only"
+                className="form-check-input me-2"
+                checked={currentCategory.is_vip_only}
+                onChange={(e) =>
+                  setCurrentCategory({ ...currentCategory, is_vip_only: e.target.checked })
+                }
+              />
+              VIP Only
+            </label>
           </div>
         </Modal.Body>
         <Modal.Footer>

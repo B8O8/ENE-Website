@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Table } from "react-bootstrap";
+import { Modal, Button, Table, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import apiService from "../../services/apiService";
 import SubscriptionModal from "./SubscriptionModal";
@@ -80,6 +80,8 @@ const ManageSubscriptions = () => {
             <th>Description</th>
             <th>Price</th>
             <th>Duration (Days)</th>
+            <th>VIP</th>
+            <th>Visible</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -91,6 +93,8 @@ const ManageSubscriptions = () => {
               <td>{sub.description}</td>
               <td>${sub.price}</td>
               <td>{sub.duration}</td>
+              <td>{sub.is_vip ? "Yes" : "No"}</td>
+              <td>{sub.is_hide ? "No" : "Yes"}</td>
               <td>
                 <Button
                   variant="warning"

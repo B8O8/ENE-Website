@@ -8,6 +8,7 @@ const Commissions = require("../models/Commissions");
 const Subscription = require("../models/Subscriptions");
 const { console } = require("inspector");
 
+
 const calculateTeamACommissions = async (userId, subscriptionPrice, level) => {
   if (level > 20) return; // Stop at Level 20
 
@@ -64,11 +65,13 @@ const userController = {
       const hashedPassword = await authService.hashPassword(password);
 
       // Generate affiliate link for the new user
-      const affiliate_link = await affiliateService.generateAffiliateLink(email);
+      const affiliate_link = await affiliateService.generateAffiliateLink(
+        email
+      );
 
       // Get the referring user's ID from the referral link
       let referringUserId = null;
-      
+
       if (ref) {
         referringUserId = await affiliateService.getReferringUserId(ref, db);
       }
@@ -94,6 +97,35 @@ const userController = {
           referringUserId,
           db
         );
+      }
+
+      // Send a welcome email
+      const subject = "Your Signup with ENE Has Been Received!";
+      const emailBody = `
+      <p>Dear ${name},</p>
+      <p>
+        Thank you for signing up with ENE! We’re thrilled to have you take your first step toward an exciting journey with us.
+      </p>
+      <p>
+        Your signup request has been successfully received, and our team is currently reviewing your payment confirmation. This process typically takes up to 3 hours. Once approved, you’ll receive another email granting you access to your ENE account.
+      </p>
+      <p>
+        In the meantime, feel free to explore more about ENE and the opportunities that await you!
+      </p>
+      <p>Thank you for your patience and trust in us.</p>
+      <p>Best regards,<br />The ENE Team</p>
+    `;
+
+      try {
+        await emailHelpers.sendEmail(
+          email,
+          subject,
+          emailBody,
+          "hello@ene.ac" // Custom "from" address for registration emails
+        );
+        console.log(`Welcome email sent to ${email}`);
+      } catch (error) {
+        console.error("Error sending welcome email:", error);
       }
 
       res.status(201).json({
@@ -144,6 +176,7 @@ const userController = {
         rank,
         subscription_id,
         status,
+        subscription_expiry,
       } = req.body;
 
       // Ensure the email is not duplicated for other users
@@ -159,6 +192,14 @@ const userController = {
         }
       }
 
+      // Convert subscription_expiry to the correct format if provided
+      const formattedExpiry = subscription_expiry
+        ? new Date(subscription_expiry)
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " ")
+        : null;
+
       // Update user details
       const [result] = await User.updateUserAdmin(userId, {
         name,
@@ -170,6 +211,7 @@ const userController = {
         rank,
         subscription_id,
         status,
+        subscription_expiry: formattedExpiry,
       });
 
       if (result.affectedRows === 0) {
@@ -201,9 +243,11 @@ const userController = {
         return res.status(403).json({ error: "Waiting for admin approval" });
       }
 
-      
       if (user.status == "Rejected") {
-        return res.status(403).json({ error: "You are not allowed to log in to the website. Please contact your referral." });
+        return res.status(403).json({
+          error:
+            "You are not allowed to log in to the website. Please contact your referral.",
+        });
       }
 
       // Compare passwords
@@ -236,16 +280,28 @@ const userController = {
         return res.status(404).json({ error: "User not found" });
       }
 
-      // Get the referred_by user and subscription details
-      const [user] = await User.findById(userId);
-      if (user[0].referred_by) {
-        const referringUserId = user[0].referred_by;
-        const [subscription] = await Subscription.findById(
-          user[0].subscription_id
-        );
+      // Fetch user and subscription details
+      const [userRows] = await User.findById(userId);
+      if (userRows.length === 0) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const user = userRows[0];
+
+      const [subscriptionRows] = await Subscription.findById(
+        user.subscription_id
+      );
+      const subscriptionName =
+        subscriptionRows.length > 0
+          ? subscriptionRows[0].name
+          : "Unknown Package";
+
+      // Handle commissions if the user was referred
+      if (user.referred_by) {
+        const referringUserId = user.referred_by;
+        const subscriptionPrice = subscriptionRows[0]?.price || 0;
 
         // Calculate 25% commission for Level 1
-        const level1Commission = (subscription[0].price * 25) / 100;
+        const level1Commission = (subscriptionPrice * 25) / 100;
 
         // Add Level 1 commission
         await Commissions.addCommission(
@@ -256,11 +312,46 @@ const userController = {
         );
 
         // Validate and calculate commissions for Ambassador users up to Level 20
-        await calculateTeamACommissions(
-          referringUserId,
-          subscription[0].price,
-          2
+        await calculateTeamACommissions(referringUserId, subscriptionPrice, 2);
+      }
+
+      // Prepare and send the approval email
+      const subject = "Welcome to the ENE Family!";
+      const emailBody = `
+      <p>Dear ${user.name},</p>
+      <p>Congratulations and welcome to the ENE family! 🎉</p>
+      <p>
+        We’re excited to officially have you on board. Your account has been approved, and you can now log in to explore your membership benefits, including access to trading courses, signals, and the ENE affiliate program.
+      </p>
+      <hr />
+      <h4>About Your Subscription</h4>
+      <p>You have successfully purchased the <strong>${subscriptionName}</strong>, which includes:</p>
+      <ul>
+        <li>Access to high-quality trading courses.</li>
+        <li>Daily trading signals to support your journey.</li>
+        <li>Exclusive resources in the ENE library.</li>
+        <li>Participation in the ENE affiliate program to earn additional income.</li>
+      </ul>
+      <p>
+        We’re confident this package will provide you with everything you need to thrive!
+      </p>
+      <p>
+        Here’s to a journey of growth, learning, and success together! If you have any questions or need assistance, don’t hesitate to reach out to our support team.
+      </p>
+      <p>We wish you great success and luck on this journey with ENE!</p>
+      <p>Warm regards,<br />The ENE Team</p>
+    `;
+
+      try {
+        await emailHelpers.sendEmail(
+          user.email,
+          subject,
+          emailBody,
+          "hello@ene.ac" // Sender address for approval emails
         );
+        console.log(`Approval email sent to ${user.email}`);
+      } catch (emailError) {
+        console.error("Error sending approval email:", emailError);
       }
 
       res.status(200).json({ message: "User approved successfully" });
@@ -362,7 +453,7 @@ const userController = {
       res.status(200).json({ message: "Password reset successfully" });
     } catch (error) {
       console.error("Error resetting password:", error);
-      res.status(500).json({ error: "Failed to reset password"});
+      res.status(500).json({ error: "Failed to reset password" });
     }
   },
 
@@ -423,70 +514,42 @@ const userController = {
 
   // Get Referral Tree
   getReferralTree: async (req, res) => {
-  
-
-    try {
-        if (!req.user || !req.user.id) {
-            
-            return res.status(400).json({ error: "Invalid user data in request." });
-        }
-
-        const userId = req.user.id;
-        const maxLevels = req.user.rank === "Ambassador" ? 20 : 5;
-        
-
-        const referralTree = [];
-
-        for (let level = 1; level <= maxLevels; level++) {
-           
-
-            const sql = `
-                SELECT al.referred_id AS user_id, u.name AS username
-                FROM affiliate_levels al
-                JOIN users u ON al.referred_id = u.id
-                WHERE al.level = ?
-                AND al.user_id = ?
-            `;
-            const params = [level, userId];
-           
-            let referrals;
-            try {
-                const [results] = await db.execute(sql, params);
-                referrals = results;
-                
-            } catch (error) {
-               
-                throw error;
-            }
-
-            if (referrals.length === 0) {
-                
-                break;
-            }
-
-            referralTree.push({
-                level,
-                referrals,
-            });
-
-        }
-
-        
-        res.status(200).json(referralTree);
-
-    } catch (error) {
-        res.status(500).json({ error: error.message || "Failed to fetch referral tree" });
+try {
+    if (!req.user || !req.user.id) {
+        return res.status(400).json({ error: "Invalid user data in request." });
     }
-},
 
+    const userId = req.user.id;
+    const maxLevels = req.user.rank === "Ambassador" ? 20 : 5;
 
+    const referralTree = [];
+    let currentLevel = [userId];
 
+    for (let level = 1; level <= maxLevels; level++) {
+        const placeholders = currentLevel.map(() => "?").join(",");
+        const sql = `
+            SELECT al.referred_id AS user_id, u.name AS username
+            FROM affiliate_levels al
+            JOIN users u ON al.referred_id = u.id
+            WHERE al.user_id IN (${placeholders})
+            AND al.level = ?
+        `;
+        const params = [...currentLevel, level];
 
-  
-  
-  
-  
-  
+        const [referrals] = await db.execute(sql, params);
+
+        if (referrals.length === 0) break;
+
+        referralTree.push({ level, referrals });
+        currentLevel = referrals.map((referral) => referral.user_id);
+    }
+
+    res.status(200).json(referralTree);
+} catch (error) {
+    console.error("Error fetching referral tree:", error);
+    res.status(500).json({ error: error.message || "Failed to fetch referral tree" });
+}
+
 
   // Get Notifications
   getNotifications: async (req, res) => {
@@ -531,25 +594,27 @@ const userController = {
   getReferrerDetails: async (req, res) => {
     try {
       const { ref } = req.query;
-  
+
       if (!ref) {
         return res.status(400).json({ error: "Referral code is required." });
       }
-  
+
       // Query the database to find the referrer
       const [referrer] = await db.query(
         "SELECT name, photo, rank FROM users WHERE affiliate_link LIKE ?",
         [`%${ref}%`]
       );
-  
+
       if (referrer.length === 0) {
         return res.status(404).json({ error: "Referrer not found." });
       }
-  
+
       // Return the referrer's details
       const { name, photo, rank } = referrer[0];
-      const photoUrl = photo ? `${req.protocol}://${req.get("host")}${photo}` : null; // Build full URL for the photo
-  
+      const photoUrl = photo
+        ? `${req.protocol}://${req.get("host")}${photo}`
+        : null; // Build full URL for the photo
+
       res.status(200).json({
         name,
         photoUrl,
@@ -578,8 +643,6 @@ const userController = {
       res.status(500).json({ error: "Failed to reject user" });
     }
   },
-  
-  
 };
 
 module.exports = userController;

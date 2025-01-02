@@ -25,8 +25,6 @@ router.post("/upload-photo", authMiddleware.authenticate, uploadMiddleware.singl
 // Endpoint to fetch referrer details
 router.get("/referrer-details", userController.getReferrerDetails);
 
-// User Wallet Requests
-router.post("/wallet/request", authMiddleware.authenticate, walletRequestController.requestWalletAction);
 
 // User Dashboard Routes
 router.get("/dashboard/wallet", authMiddleware.authenticate, userController.getWalletBalance);
@@ -49,6 +47,19 @@ router.put("/admin/:id", authMiddleware.authenticate, authMiddleware.authorizeAd
 router.get("/admin/wallet-requests", authMiddleware.authenticate, authMiddleware.authorizeAdmin, walletRequestController.getPendingRequests);
 router.post("/admin/wallet-requests/:requestId/approve", authMiddleware.authenticate, authMiddleware.authorizeAdmin, walletRequestController.approveRequest);
 router.post("/admin/wallet-requests/:requestId/reject", authMiddleware.authenticate, authMiddleware.authorizeAdmin, walletRequestController.rejectRequest);
+router.get(
+  "/admin/wallet/activity",
+  authMiddleware.authenticate,
+  authMiddleware.authorizeAdmin,
+  walletRequestController.getAllLogs
+);
+router.get(
+  "/admin/wallet/totals",
+  authMiddleware.authenticate,
+  authMiddleware.authorizeAdmin,
+  walletController.getWalletTotals
+);
+
 
 
 // Subscription Management (Admin Only)
@@ -59,9 +70,19 @@ router.put("/subscriptions/:id", authMiddleware.authenticate, authMiddleware.aut
 router.delete("/subscriptions/:id", authMiddleware.authenticate, authMiddleware.authorizeAdmin, subscriptionController.deleteSubscription);
 
 // Wallet Routes
+// User Wallet Requests
+router.post("/wallet/request", authMiddleware.authenticate, walletRequestController.requestWalletAction);
 router.get("/wallet", authMiddleware.authenticate, walletController.getWalletBalance);
 router.post("/wallet/deduct", authMiddleware.authenticate, walletController.deductFromWallet);
 router.post("/wallet/withdraw", authMiddleware.authenticate, walletController.withdrawFromWallet);
+// Fetch wallet activity logs for the logged-in user
+router.get(
+  "/wallet/logs",
+  authMiddleware.authenticate,
+  walletController.getUserWalletLogs
+);
+
+
 
 // Category routes
 router.post("/categories", authMiddleware.authenticate, authMiddleware.authorizeAdmin, categoryController.createCategory);
