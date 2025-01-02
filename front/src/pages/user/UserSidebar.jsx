@@ -21,12 +21,13 @@ const UserSidebar = ({ isOpen, setIsOpen }) => {
   // Decode the token to check for VIP status
   const token = localStorage.getItem("token");
   let isVip = false;
-
+  let isAdmin = false;
+  
   if (token) {
     try {
       const decoded = jwtDecode(token);
       isVip = decoded.is_vip === 1; // Check if the user is a VIP
-      // Add logic to restrict access based on isVip
+      isAdmin = decoded.rank === "Admin"; // Check if the user is an admin
     } catch (error) {
       console.error("Failed to decode token:", error);
     }
@@ -155,6 +156,18 @@ const UserSidebar = ({ isOpen, setIsOpen }) => {
             {isOpen && "Library"}
           </Link>
         </li>
+        {/* Admin Dashboard Link (only for admins) */}
+        {isAdmin && (
+          <li className="nav-item mb-3">
+            <Link
+              to="/admin-dashboard"
+              className="nav-link text-white d-flex align-items-center"
+            >
+              <FontAwesomeIcon icon={faGaugeHigh} className="me-2" />
+              {isOpen && "Admin Dashboard"}
+            </Link>
+          </li>
+        )}
         {/* Logout Button */}
         <li className="nav-item mt-auto">
           <button
