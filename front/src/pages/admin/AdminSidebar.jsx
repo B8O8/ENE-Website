@@ -11,6 +11,7 @@ import {
   faSignOutAlt,
   faSignal,
   faFile,
+  faStopwatch,
 } from "@fortawesome/free-solid-svg-icons";
 
 const AdminSidebar = ({ isOpen, setIsOpen }) => {
@@ -139,6 +140,17 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
             {isOpen && "Manage Library"}
           </Link>
         </li>
+        <li className="nav-item mb-3">
+          <Link
+            to="/admin-dashboard/reminders"
+            className="nav-link text-white d-flex align-items-center"
+            >
+            <FontAwesomeIcon icon={faStopwatch} className="me-2" />
+            {isOpen && "Manage Reminders"}
+            </Link>
+        </li>
+
+
         {/* User Dashboard Link */}
         <li className="nav-item mb-3">
           <Link

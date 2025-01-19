@@ -13,7 +13,7 @@ const ManageSubscriptions = () => {
   // Fetch all subscriptions
   const fetchSubscriptions = async () => {
     try {
-      const response = await apiService.get("/subscriptions");
+      const response = await apiService.get("/subscriptionsAdmin");
       setSubscriptions(response);
     } catch (error) {
       toast.error("Failed to fetch subscriptions.");

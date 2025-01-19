@@ -69,6 +69,8 @@ const WalletRequests = () => {
               <th>Email</th>
               <th>Amount</th>
               <th>Type</th>
+              <th>Method</th>
+              <th>Details</th>
               <th>Requested At</th>
               <th>Actions</th>
             </tr>
@@ -81,6 +83,10 @@ const WalletRequests = () => {
                 <td>{req.email}</td>
                 <td>${req.amount}</td>
                 <td>{req.type}</td>
+                <td>{req.method}</td>
+                <td>
+                  {req.details || "-"}
+                </td>
                 <td>{new Date(req.created_at).toLocaleString()}</td>
                 <td>
                   <Button

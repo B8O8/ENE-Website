@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Login from "./pages/Login.jsx";
@@ -20,16 +25,22 @@ import Courses from "./pages/user/Courses.jsx";
 import UserProfile from "./components/UserProfile.jsx";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import SignalTab from "./pages/user/SignalTab"; 
+import SignalTab from "./pages/user/SignalTab";
 import ManageSignals from "./pages/admin/ManageSignals";
 import AdminDashboardReports from "./pages/admin/AdminDashboardReports";
 import UserDashboardReports from "./pages/user/UserDashboardReports.jsx";
 import ManageLibrary from "./pages/admin/ManageLibrary.jsx";
 import Library from "./pages/user/Library.jsx";
+import ManageReminders from "./pages/admin/ManageReminders.jsx";
 
 const App = () => {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<NotFound />} />
@@ -72,6 +83,7 @@ const App = () => {
           <Route path="videos" element={<ManageVideos />} />
           <Route path="signals" element={<ManageSignals />} />
           <Route path="library" element={<ManageLibrary />} />
+          <Route path="reminders" element={<ManageReminders />} />
         </Route>
       </Routes>
     </Router>

@@ -13,7 +13,6 @@ const ManageSignals = () => {
     try {
       const response = await apiService.get("/signals/admin/logs");
       setLogs(response);
-      console.log(response);
     } catch (error) {
       toast.error("Failed to fetch signal logs.");
     } finally {
@@ -27,7 +26,11 @@ const ManageSignals = () => {
 
   // Reset invite link for a user
   const handleResetInvite = async (userId) => {
-    if (!window.confirm("Are you sure you want to reset the invite link for this user?")) {
+    if (
+      !window.confirm(
+        "Are you sure you want to reset the invite link for this user?"
+      )
+    ) {
       return;
     }
 
@@ -61,39 +64,51 @@ const ManageSignals = () => {
             </tr>
           </thead>
           <tbody>
-  {logs.map((log, index) => (
-    <tr key={log.id}>
-      <td>{index + 1}</td>
-      <td>{log.user_name ? `${log.user_name} (${log.user_email})` : "N/A"}</td> {/* Display user name */}
-      <td>{log.action}</td>
-      <td>{log.details}</td>
-      <td>
-        {log.invite_link ? (
-          <a href={log.invite_link} target="_blank" rel="noopener noreferrer">
-            Invite Link
-          </a>
-        ) : (
-          "N/A"
-        )}
-      </td>
-      <td>{log.retry_count}</td>
-      <td>{log.last_retry_at ? new Date(log.last_retry_at).toLocaleString() : "N/A"}</td>
-      <td>{new Date(log.created_at).toLocaleString()}</td>
-      <td>
-        {log.action === "add_to_channel" && (
-          <Button
-            variant="warning"
-            size="sm"
-            onClick={() => handleResetInvite(log.user_id)}
-          >
-            Reset Invite
-          </Button>
-        )}
-      </td>
-    </tr>
-  ))}
-</tbody>
-
+            {logs.map((log, index) => (
+              <tr key={log.id}>
+                <td>{index + 1}</td>
+                <td>
+                  {log.user_name
+                    ? `${log.user_name} (${log.user_email})`
+                    : "N/A"}
+                </td>
+                {/* Display user name */}
+                <td>{log.action}</td>
+                <td>{log.details}</td>
+                <td>
+                  {log.invite_link ? (
+                    <a
+                      href={log.invite_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Invite Link
+                    </a>
+                  ) : (
+                    "N/A"
+                  )}
+                </td>
+                <td>{log.retry_count}</td>
+                <td>
+                  {log.last_retry_at
+                    ? new Date(log.last_retry_at).toLocaleString()
+                    : "N/A"}
+                </td>
+                <td>{new Date(log.created_at).toLocaleString()}</td>
+                <td>
+                  {log.action === "add_to_channel" && (
+                    <Button
+                      variant="warning"
+                      size="sm"
+                      onClick={() => handleResetInvite(log.user_id)}
+                    >
+                      Reset Invite
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </Table>
       )}
     </div>
