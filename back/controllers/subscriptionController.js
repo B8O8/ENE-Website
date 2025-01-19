@@ -1,4 +1,5 @@
 const Subscription = require("../models/Subscriptions");
+const { get } = require("../routes/signalRoutes");
 
 const subscriptionController = {
   // Create a new subscription
@@ -22,6 +23,17 @@ const subscriptionController = {
   getAllSubscriptions: async (req, res) => {
     try {
       const [subscriptions] = await Subscription.getAll();
+      res.status(200).json(subscriptions); // Return all subscriptions
+    } catch (error) {
+      console.error("Error fetching subscriptions:", error);
+      res.status(500).json({ error: "Failed to fetch subscriptions" });
+    }
+  },
+
+  // Get all subscriptions for admin
+  getAllSubscriptionAdmin: async (req, res) => {
+    try {
+      const [subscriptions] = await Subscription.gerAllAdmin();
       res.status(200).json(subscriptions); // Return all subscriptions
     } catch (error) {
       console.error("Error fetching subscriptions:", error);

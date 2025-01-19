@@ -9,8 +9,10 @@ const path = require("path");
 const fs = require("fs"); // File system module
 const commissionRoutes = require("./routes/commissionRoutes");
 const libraryRoutes = require("./routes/libraryRoutes"); // Import library routes
+const reminderRoutes = require("./routes/reminderRoutes");
 require("./cron/transferCommission");
 require("./cron/signalCronJob");
+require("./cron/reminderCronJob");
 
 const userRoutes = require("./routes/userRoutes");
 
@@ -51,6 +53,8 @@ app.use("/users/signals", signalRoutes);
 app.use("/users/commissions", commissionRoutes);
 // Library Routes
 app.use("/users/library", libraryRoutes); // Add library routes
+// Reminder Routes
+app.use("/users/admin", reminderRoutes);
 
 // Test DB connection
 const testDbConnection = async () => {

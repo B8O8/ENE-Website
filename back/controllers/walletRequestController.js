@@ -1,38 +1,58 @@
 const WalletRequests = require("../models/WalletRequests");
 const User = require("../models/Users");
 const emailHelpers = require("../utils/emailHelper");
+const crypto = require("crypto");
 
 const walletRequestController = {
   // Request deduction or withdrawal
   requestWalletAction: async (req, res) => {
     try {
       const userId = req.user.id;
-      const { amount, type } = req.body;
-
+      const { amount, type, method, details } = req.body;
+  
+      // Validate input
       if (!amount || isNaN(amount) || amount <= 0 || !['deduct', 'withdraw'].includes(type)) {
         return res.status(400).json({ error: "Invalid request data" });
       }
-
+  
+      if (type === 'withdraw' && (!method || !['Wish', 'USDT'].includes(method))) {
+        return res.status(400).json({ error: "Invalid withdrawal method" });
+      }
+  
+      if (type === 'withdraw' && method === 'Wish' && !details) {
+        return res.status(400).json({ error: "Phone number is required for Wish withdrawal" });
+      }
+  
+      if (type === 'withdraw' && method === 'USDT' && !details) {
+        return res.status(400).json({ error: "Wallet address is required for USDT withdrawal" });
+      }
+  
       // Add the request to the database
-      await WalletRequests.addRequest(userId, amount, type);
-
+      await WalletRequests.addRequest(userId, amount, type, method, details);
+  
       // Log the activity
-      await WalletRequests.logActivity(userId, type, amount, `User requested a ${type} of $${amount}`, "pending");
-
-      // Send an email to the admin
+      await WalletRequests.logActivity(
+        userId,
+        type,
+        amount,
+        `User requested a ${type} of $${amount} via ${method}`,
+        "pending"
+      );
+  
+      // Notify the admin
       await emailHelpers.sendEmail(
         process.env.ADMIN_EMAIL,
         `New Wallet ${type} Request`,
-        `<p>User ${req.user.name} (${req.user.email}) has requested to ${type} ${amount}$ from their wallet.</p>`
+        `<p>User ${req.user.name} (${req.user.email}) has requested to ${type} $${amount} via ${method}. Details: ${details}</p>`
       );
-      
-
+  
       res.status(200).json({ message: `Wallet ${type} request submitted successfully` });
     } catch (error) {
       console.error("Error submitting wallet request:", error);
       res.status(500).json({ error: "Failed to submit wallet request" });
     }
   },
+  
 
   // Approve a request
   approveRequest: async (req, res) => {
@@ -140,11 +160,50 @@ const walletRequestController = {
   getAllLogs: async (req, res) => {
     try {
       const { limit = 50, offset = 0 } = req.query;
-      const [logs] = await WalletRequests.getAllWithdrawRequests("completed", parseInt(limit), parseInt(offset));
+      const [logs] = await WalletRequests.getAllActivityLogs(parseInt(limit), parseInt(offset));
       res.status(200).json(logs);
     } catch (error) {
       console.error("Error fetching all wallet logs:", error);
       res.status(500).json({ error: "Failed to fetch wallet logs." });
+    }
+  },  
+
+  // Generate OTP
+  generateWalletOTP: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const otp = crypto.randomInt(100000, 999999).toString();
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+      await WalletRequests.storeOTP(userId, otp, expiresAt);
+
+      await emailHelpers.sendWalletOTP(req.user.email, otp);
+
+      res.status(200).json({ message: "OTP sent to your email." });
+    } catch (error) {
+      console.error("Error generating OTP:", error);
+      res.status(500).json({ error: "Failed to generate OTP." });
+    }
+  },
+
+  // Validate OTP
+  validateWalletOTP: async (req, res) => {
+    try {
+      const { otp } = req.body;
+      const userId = req.user.id;
+
+      const [rows] = await WalletRequests.validateOTP(userId, otp);
+
+      if (rows.length === 0) {
+        return res.status(400).json({ error: "Invalid or expired OTP." });
+      }
+
+      await WalletRequests.markOTPAsUsed(rows[0].id);
+
+      res.status(200).json({ message: "OTP verified successfully." });
+    } catch (error) {
+      console.error("Error validating OTP:", error);
+      res.status(500).json({ error: "Failed to validate OTP." });
     }
   },
   

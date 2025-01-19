@@ -23,6 +23,12 @@ const Subscription = {
     return db.execute(sql);
   },
 
+  // Get all subscriptions for admin
+  gerAllAdmin: () => {
+    const sql = `SELECT * FROM subscriptions`;
+    return db.execute(sql);
+  },
+
   // Get a subscription by ID
   findById: (id) => {
     const sql = `SELECT * FROM subscriptions WHERE id = ?`;

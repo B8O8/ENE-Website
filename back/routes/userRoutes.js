@@ -60,10 +60,9 @@ router.get(
   walletController.getWalletTotals
 );
 
-
-
 // Subscription Management (Admin Only)
 router.get("/subscriptions", subscriptionController.getAllSubscriptions);
+router.get("/subscriptionsAdmin", authMiddleware.authenticate, authMiddleware.authorizeAdmin, subscriptionController.getAllSubscriptionAdmin);
 router.get("/subscriptions/:id", subscriptionController.getSubscriptionById);
 router.post("/subscriptions", authMiddleware.authenticate, authMiddleware.authorizeAdmin, subscriptionController.createSubscription);
 router.put("/subscriptions/:id", authMiddleware.authenticate, authMiddleware.authorizeAdmin, subscriptionController.updateSubscription);
@@ -81,6 +80,8 @@ router.get(
   authMiddleware.authenticate,
   walletController.getUserWalletLogs
 );
+router.post("/wallet/otp", authMiddleware.authenticate, walletRequestController.generateWalletOTP);
+router.post("/wallet/otp/validate", authMiddleware.authenticate, walletRequestController.validateWalletOTP);
 
 
 

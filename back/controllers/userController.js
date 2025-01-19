@@ -116,17 +116,13 @@ const userController = {
       <p>Best regards,<br />The ENE Team</p>
     `;
 
-      try {
-        await emailHelpers.sendEmail(
-          email,
-          subject,
-          emailBody,
-          "hello@ene.ac" // Custom "from" address for registration emails
-        );
-        console.log(`Welcome email sent to ${email}`);
-      } catch (error) {
-        console.error("Error sending welcome email:", error);
-      }
+      // Send registration email
+    try {
+      await emailHelpers.sendRegistrationEmail(email, subject, emailBody);
+      console.log(`Welcome email sent to ${email}`);
+    } catch (error) {
+      console.error("Error sending welcome email:", error);
+    }
 
       res.status(201).json({
         message: "User registered successfully",
@@ -342,17 +338,12 @@ const userController = {
       <p>Warm regards,<br />The ENE Team</p>
     `;
 
-      try {
-        await emailHelpers.sendEmail(
-          user.email,
-          subject,
-          emailBody,
-          "hello@ene.ac" // Sender address for approval emails
-        );
-        console.log(`Approval email sent to ${user.email}`);
-      } catch (emailError) {
-        console.error("Error sending approval email:", emailError);
-      }
+    try {
+      await emailHelpers.sendWelcomeEmail(email, subject, emailBody);
+      console.log(`Welcome email sent to ${email}`);
+    } catch (error) {
+      console.error("Error sending welcome email:", error);
+    }
 
       res.status(200).json({ message: "User approved successfully" });
     } catch (error) {
