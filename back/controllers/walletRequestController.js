@@ -3,55 +3,62 @@ const User = require("../models/Users");
 const emailHelpers = require("../utils/emailHelper");
 const crypto = require("crypto");
 
+
 const walletRequestController = {
   // Request deduction or withdrawal
   requestWalletAction: async (req, res) => {
     try {
-      const userId = req.user.id;
-      const { amount, type, method, details } = req.body;
-  
-      // Validate input
-      if (!amount || isNaN(amount) || amount <= 0 || !['deduct', 'withdraw'].includes(type)) {
-        return res.status(400).json({ error: "Invalid request data" });
-      }
-  
-      if (type === 'withdraw' && (!method || !['Wish', 'USDT'].includes(method))) {
-        return res.status(400).json({ error: "Invalid withdrawal method" });
-      }
-  
-      if (type === 'withdraw' && method === 'Wish' && !details) {
-        return res.status(400).json({ error: "Phone number is required for Wish withdrawal" });
-      }
-  
-      if (type === 'withdraw' && method === 'USDT' && !details) {
-        return res.status(400).json({ error: "Wallet address is required for USDT withdrawal" });
-      }
-  
-      // Add the request to the database
-      await WalletRequests.addRequest(userId, amount, type, method, details);
-  
-      // Log the activity
-      await WalletRequests.logActivity(
-        userId,
-        type,
-        amount,
-        `User requested a ${type} of $${amount} via ${method}`,
-        "pending"
-      );
-  
-      // Notify the admin
-      await emailHelpers.sendEmail(
-        process.env.ADMIN_EMAIL,
-        `New Wallet ${type} Request`,
-        `<p>User ${req.user.name} (${req.user.email}) has requested to ${type} $${amount} via ${method}. Details: ${details}</p>`
-      );
-  
-      res.status(200).json({ message: `Wallet ${type} request submitted successfully` });
+        const userId = req.user.id;
+        const { amount, type, method, details } = req.body;
+
+        // Validate input
+        if (!amount || isNaN(amount) || amount <= 0 || !['deduct', 'withdraw'].includes(type)) {
+            return res.status(400).json({ error: "Invalid request data" });
+        }
+
+        if (type === 'withdraw' && (!method || !['Wish', 'USDT'].includes(method))) {
+            return res.status(400).json({ error: "Invalid withdrawal method" });
+        }
+
+        if (type === 'withdraw' && method === 'Wish' && !details) {
+            return res.status(400).json({ error: "Phone number is required for Wish withdrawal" });
+        }
+
+        if (type === 'withdraw' && method === 'USDT' && !details) {
+            return res.status(400).json({ error: "Wallet address is required for USDT withdrawal" });
+        }
+
+        // Add the request to the database
+        await WalletRequests.addRequest(userId, amount, type, method, details);
+
+        // Log the activity
+        await WalletRequests.logActivity(
+            userId,
+            type,
+            amount,
+            `User requested a ${type} of $${amount} via ${method}`,
+            "pending"
+        );
+
+        // Notify the admin
+        try {
+            await emailHelpers.sendEmail(
+                process.env.ADMIN_EMAIL,
+                `New Wallet ${type} Request`,
+                `<p>User ${req.user.name} (${req.user.email}) has requested to ${type} $${amount} via ${method}. Details: ${details}</p>`
+            );
+
+        } catch (emailError) {
+           console.log("Error sending email to admin:", emailError);
+        }
+
+        res.status(200).json({ message: `Wallet ${type} request submitted successfully` });
     } catch (error) {
-      console.error("Error submitting wallet request:", error);
-      res.status(500).json({ error: "Failed to submit wallet request" });
+        logToFile(`Error submitting wallet request: ${error.stack || error.message || error}`);
+        res.status(500).json({ error: "Failed to submit wallet request" });
     }
-  },
+},
+
   
 
   // Approve a request
@@ -125,7 +132,17 @@ const walletRequestController = {
       await emailHelpers.sendEmail(
         request.email,
         `Wallet ${request.type} Rejected`,
-        `<p>Your request to ${request.type} ${request.amount} has been rejected.</p>`
+        `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <h2 style="color: #d9534f;">Wallet Request Rejected</h2>
+            <p>Dear User,</p>
+            <p>We regret to inform you that your request to <strong>${request.type}</strong> an amount of <strong>$${request.amount}</strong> has been rejected.</p>
+            <p>If you have any questions or require further assistance, please don't hesitate to contact us at <a href="mailto:support@ene.ac">support@ene.ac</a>.</p>
+            <br>
+            <p>Best regards,</p>
+            <p>The ENE Support Team</p>
+        </div>
+        `
       );
 
       res.status(200).json({ message: "Request rejected successfully" });
