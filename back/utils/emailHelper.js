@@ -83,10 +83,22 @@ const emailHelpers = {
       from: `"ENE Support" <${process.env.SUPPORT_EMAIL_USER}>`, // Default email (support@ene.ac)
       to,
       subject: "Wallet OTP",
-      html: `<p>Your OTP to access your wallet is: <strong>${otp}</strong></p>
-             <p>This OTP is valid for 1 hour.</p>
-             <p>If you did not request this, please ignore this email.</p>`,
-    };
+      html: `
+          <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+              <h2 style="color: #4CAF50;">Wallet OTP Verification</h2>
+              <p>Dear User,</p>
+              <p>Your OTP to access your wallet is:</p>
+              <h1 style="color: #d9534f; text-align: center;">${otp}</h1>
+              <p>This OTP is valid for <strong>1 hour</strong>.</p>
+              <p>If you did not request this, please ignore this email or contact our support team immediately at 
+                  <a href="mailto:support@ene.ac">support@ene.ac</a>.</p>
+              <br>
+              <p>Best regards,</p>
+              <p><strong>ENE Support Team</strong></p>
+          </div>
+      `,
+  };
+  
 
     return transporter.sendMail(mailOptions);
   },
