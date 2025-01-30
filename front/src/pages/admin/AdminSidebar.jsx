@@ -12,6 +12,7 @@ import {
   faSignal,
   faFile,
   faStopwatch,
+  faCalendarDay
 } from "@fortawesome/free-solid-svg-icons";
 
 const AdminSidebar = ({ isOpen, setIsOpen }) => {
@@ -144,12 +145,21 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
           <Link
             to="/admin-dashboard/reminders"
             className="nav-link text-white d-flex align-items-center"
-            >
+          >
             <FontAwesomeIcon icon={faStopwatch} className="me-2" />
             {isOpen && "Manage Reminders"}
-            </Link>
+          </Link>
         </li>
-
+        {/* Manage Events data */}
+        <li className="nav-item mb-3">
+          <Link
+            to="/admin-dashboard/events"
+            className="nav-link text-white d-flex align-items-center"
+          >
+            <FontAwesomeIcon icon={faCalendarDay} className="me-2" />
+            {isOpen && "Manage Events"}
+          </Link>
+        </li>
 
         {/* User Dashboard Link */}
         <li className="nav-item mb-3">
