@@ -85,7 +85,8 @@ const EventRegistration = () => {
         phone: formData.phone,
         country_of_residence: formData.country_of_residence.label, // Send selected country
       });
-      toast.success("Event registered successfully! Check your inbox");
+      toast.success("Event registered successfully! Check your inbox or junk.");
+      alert("Event registered successfully! Check your inbox or junk.");
       setFormData({
         firstName: "",
         lastName: "",
