@@ -50,7 +50,7 @@ const App = () => {
         <Route path="/register" element={<ConditionalRegister />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/event" element={<EventRegistration />} />
+        {/* <Route path="/event" element={<EventRegistration />} /> */}
         {/* Protected User Routes */}
         <Route
           path="/user-dashboard/*"
