@@ -114,52 +114,52 @@ const emailHelpers = {
     const mailOptions = {
       from: `"ENE Events" <${process.env.EVENTS_EMAIL_USER}>`, // Default "events@ene.ac"
       to,
-      subject: "Event Registration Confirmation",
+      subject: "! تأكيد تسجيلك في معسكر الفوركس – جهّز نفسك للانطلاق ✅",
       html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: 0 auto;">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h1 style="color: #4CAF50;">Smart Trading Webinar</h1>
-            <p style="font-size: 1.1em; color: #666;">February 3, 2025 | 8:00 PM Beirut Time</p>
+        <div style="direction: rtl; font-family: 'Tajawal', Arial, sans-serif; line-height: 1.8; color: #333; background-color: #f8f9fa; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; text-align: right;">
+      
+          
+          <div style="direction: rtl; text-align: center; margin-bottom: 20px;">
+            <h1 style="color: #FF9800; font-size: 1.8em;">📢 تأكيد تسجيلك في معسكر الفوركس</h1>
+            <p style="font-size: 1.2em; color: #666;">21، 22، 23 مارس 2025</p>
           </div>
-          <p style="font-size: 1.1em; color: #333;">Hi ${firstName},</p>
-          <p style="font-size: 1.1em; color: #333;">
-            Thank you for registering for our <strong>Smart Trading Webinar</strong>. This session is packed with valuable insights to help you elevate your trading journey. You’ll learn about:
+
+         
+          <p style="direction: rtl; font-size: 1.2em; color: #333;">مرحبًا <strong>${firstName}</strong>،</p>
+          <p style="direction: rtl; font-size: 1.1em; color: #333;">
+            تهانينا! لقد تم تأكيد تسجيلك في <strong>معسكر الفوركس التدريبي</strong> المجاني، والذي سيُقام على مدار <strong>3 أيام</strong> مليئة بالمعلومات والمهارات الأساسية لتحقيق النجاح في سوق الفوركس. 🎯
           </p>
-          <ul style="font-size: 1.1em; color: #333; margin-left: 20px;">
-            <li><strong>Forex Trading Basics:</strong> Understand how the market works and what drives price movements.</li>
-            <li><strong>Money Management:</strong> Key strategies to protect and grow your capital.</li>
-            <li><strong>ENE Social Trading System:</strong> Discover how to leverage our system to follow expert traders and automate your trading journey.</li>
+
+          
+          <h3 style="direction: rtl; color: #2196F3; font-size: 1.3em; margin-top: 20px;">🔹 ماذا ستتعلم خلال المعسكر؟</h3>
+          <ul style="direction: rtl; font-size: 1.1em; color: #333; padding-right: 20px;">
+            <li>✅ <strong>أساسيات سوق الفوركس</strong> – تعرّف على السوق وطريقة عمله.</li>
+            <li>✅ <strong>إدارة المخاطر</strong> – كيف تحمي رأس مالك أثناء التداول.</li>
+            <li>✅ <strong>تنفيذ إشارات الفوركس (نظام ENE)</strong> – كيف تستخدم الإشارات بشكل فعّال لتحقيق نتائج أفضل.</li>
           </ul>
-          <div style="margin: 20px 0; padding: 15px; background-color: #eef9ee; border-left: 5px solid #4CAF50;">
-            <p style="font-size: 1.1em; margin: 0;">
-              <strong>Webinar Details:</strong><br>
-              <strong>Date:</strong> February 3, 2025<br>
-              <strong>Time:</strong> 8:00 PM Beirut Time<br>
-              <strong>Platform:</strong> Zoom<br>
-              <strong>🔗 Join the Webinar:</strong> 
-              <a href="https://us06web.zoom.us/j/2904802883?pwd=bmJ3UUhwc2NFU3FzNUV4dzhmalZ4dz09&omn=86803569425" style="color: #4CAF50; text-decoration: none;">
-                Join Now
-              </a><br>
-              <strong>Meeting ID:</strong> 290 480 2883<br>
-              <strong>Passcode:</strong> 123
+
+         
+          <h3 style="direction: rtl; color: #4CAF50; font-size: 1.3em; margin-top: 20px;">📌 للاستفادة القصوى من المعسكر، تأكد من:</h3>
+          <ul style="direction: rtl; font-size: 1.1em; color: #333; padding-right: 20px;">
+            <li>🎥 <strong>تشغيل الكاميرا</strong> لضمان التفاعل الكامل.</li>
+            <li>🔕 الجلوس في مكان هادئ مع اتصال إنترنت مستقر.</li>
+            <li>🎧 معرفة كيفية استخدام Zoom وربط الصوت بشكل صحيح.</li>
+            <li>📝 تجهيز دفتر ملاحظات لتسجيل الأفكار وطرح الأسئلة.</li>
+            <li>⏳ البقاء حتى نهاية الجلسة حتى لا تفوّت أي معلومة (هناك مفاجأة كبيرة في اليوم الثالث!).</li>
+          </ul>
+
+          
+          <div style="direction: rtl; margin: 20px 0; padding: 15px; background-color: #ffebee; border-right: 5px solid #d32f2f;">
+            <p style="font-size: 1.1em; margin: 0; color: #d32f2f;">
+              ❗ <strong>سيتم إرسال رابط الدخول إلى الجلسة عبر واتساب</strong> من قبل فريقنا، لذا تأكد من متابعة رسائلك!
             </p>
           </div>
-          <div style="margin: 20px 0; padding: 15px; background-color: #e7f3ff; border-left: 5px solid #007bff;">
-            <p style="font-size: 1.1em; margin: 0;">
-              💬 <strong>Join Our Trading Community:</strong><br>
-              <a href="https://t.me/+iwaFjYfQdEI4NTY0" style="color: #007bff; text-decoration: none;">
-                https://t.me/+iwaFjYfQdEI4NTY0
-              </a>
-            </p>
-            <p style="font-size: 0.9em; color: #555; margin-top: 10px;">
-              Get exclusive insights and updates by joining the conversation in our Telegram group.
-            </p>
-          </div>
-          <p style="font-size: 1.1em; color: #333;">If you have any questions, just hit "Reply."</p>
-          <p style="font-size: 1.1em; color: #333;">Looking forward to seeing you there!</p>
-          <br>
-          <p style="font-size: 1.1em; color: #333;"><strong>Best regards,</strong></p>
-          <p style="font-size: 1.1em; color: #333;"><strong>Hasan Saleh</strong><br>Founder, ENE</p>
+
+          
+          <p style="direction: rtl; font-size: 1.2em; color: #333; text-align: center; margin-top: 20px;">
+            🚀 نحن متحمسون لرؤيتك في المعسكر والانطلاق في رحلتك نحو الاحتراف في عالم الفوركس!
+          </p>
+
         </div>
       `,
     };
