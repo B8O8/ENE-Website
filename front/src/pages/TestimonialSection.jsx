@@ -55,8 +55,9 @@ const TestimonialSection = () => {
   return (
     <div className="container my-5">
       <h2 className="text-center text-warning mb-4" dir="rtl">
-        💬 ماذا قال طالبنا عن معسكر الفوركس التدريبي؟ شاهد قصص نجاحهم!
+        💬 نتائج بعض طلابنا في معسكر الفوركس التدريبي!
       </h2>
+
 
       {/* Bootstrap Carousel (Manually Controlled) */}
       <div id="testimonialCarousel" className="carousel slide" data-bs-ride="false">
