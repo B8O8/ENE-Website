@@ -32,9 +32,9 @@ import UserDashboardReports from "./pages/user/UserDashboardReports.jsx";
 import ManageLibrary from "./pages/admin/ManageLibrary.jsx";
 import Library from "./pages/user/Library.jsx";
 import ManageReminders from "./pages/admin/ManageReminders.jsx";
-import EventRegistration
- from "./pages/EventRegistration.jsx";
+import EventRegistrationAR from "./pages/EventRegistration.jsx";
 import ManageEvents from "./pages/admin/ManageEvents.jsx";
+import Congratulations from "./pages/Congratulations.jsx";
 const App = () => {
   return (
     <Router
@@ -50,7 +50,8 @@ const App = () => {
         <Route path="/register" element={<ConditionalRegister />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        {/* <Route path="/event" element={<EventRegistration />} /> */}
+        <Route path="/event" element={<EventRegistrationAR />} />
+        <Route path="/congratulations" element={<Congratulations />} />
         {/* Protected User Routes */}
         <Route
           path="/user-dashboard/*"
