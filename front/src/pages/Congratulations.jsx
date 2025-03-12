@@ -83,7 +83,7 @@ const Congratulations = () => {
         transition={{ duration: 0.5, delay: 1.5, type: "spring" }}
       >
         <Link
-          to="/"
+          to="/event"
           className="btn btn-lg btn-light mt-4 px-5 py-3 fw-bold"
           style={{
             borderRadius: "50px",
